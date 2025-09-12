@@ -22,6 +22,14 @@
 
     .section{padding:64px 0} @media(min-width:768px){ .section{padding:96px 0} }
 
+    /* Reduce gap specifically between About and Contact */
+    #about{ padding-bottom:36px; }
+    #contact{ padding-top:36px; }
+    @media(min-width:768px){
+      #about{ padding-bottom:56px; }
+      #contact{ padding-top:56px; }
+    }
+
     /* Ambient background + grain */
     .ambient{ position:fixed; inset:-20%; z-index:-3; pointer-events:none; filter:blur(40px) saturate(108%); opacity:.85; background:
       radial-gradient(70rem 60rem at 20% 20%, rgba(195,154,107,.16), transparent 60%),
@@ -111,7 +119,7 @@
         <img src="assets/ZANELLA%20LOGO%20WHITE.png" alt="Zanella Lounge" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">
       </a>
       <nav class="nav-links" aria-label="Primary">
-        <a href="#tickets">Tickets</a><a href="#about">About</a><a href="#contact">Contact</a>
+        <a href="#about">About</a><a href="#contact">Contact</a>
       </nav>
     </div>
   </div>
@@ -123,7 +131,7 @@
       <div class="chip chip--green" style="margin-bottom:10px">Smart‑casual • Warm industrial • Green accents</div>
       <h1 id="heroHeadline">Dine. Drink. <span class="accent">Gather.</span></h1>
       <p id="heroSub">Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.</p>
-      <div class="hero-ctas"><a class="btn btn-gold" href="#tickets">Reserve a Table</a><a class="btn btn-ghost" href="#about">Explore the Lounge</a></div>
+      <div class="hero-ctas"><a class="btn btn-gold" href="#contact">Reserve a Table</a><a class="btn btn-ghost" href="#about">Explore the Lounge</a></div>
     </div>
   </section>
 
@@ -132,7 +140,7 @@
       <div class="grid grid-2">
         <div class="reveal">
           <h2>About Us</h2>
-          <p>Zanella Lounge blends concrete textures with warm wood grains and biophilic design. Our chefs and bartenders craft seasonal menus for slow evenings and lively nights alike.</p>
+          <p>ZANELLA Lounge is a quiet-luxury social space in Cluj-Napoca, designed for those who value connection over chaos. With a warm industrial aesthetic of concrete, wood, plants, and curated light, every detail is intentional — from hosted service to signature cocktails built on local botanicals. Limited Social Suites ensure your night feels exclusive, effortless, and unforgettable.</p>
           <div class="features">
             <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M4 12c0-4 3-7 8-7s8 3 8 7M4 12c0 4 3 7 8 7s8-3 8-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Elevated Comfort Food</span>
             <span class="chip chip--green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 20l6-16 6 16M9.5 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Craft Cocktails</span>
@@ -140,7 +148,7 @@
           </div>
         </div>
         <div class="card reveal" style="overflow:hidden">
-          <div style="aspect-ratio:4/3; background:linear-gradient(135deg, rgba(135,167,122,.2), rgba(195,154,107,.2)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1500&auto=format&fit=crop') center/cover; filter:saturate(.96) contrast(.97) brightness(.95)"></div>
+          <div style="aspect-ratio:4/3; background:linear-gradient(135deg, rgba(135,167,122,.1), rgba(195,154,107,.1)), url('assets/zanella_lounge_location_preview.jpg') center/cover; filter:saturate(.96) contrast(.97) brightness(.95)"></div>
         </div>
       </div>
     </div>
@@ -199,6 +207,7 @@
       <div class="card reveal" style="padding:22px">
         <h3 style="margin-top:0">Visit</h3>
         <p>Strada Ciocarliei 15, Cluj‑Napoca</p>
+        <p>Hotel Casa Alesiv - Franchise Partners</p>
         <p class="inline-note">Open Tue–Sun · 17:00–01:00</p>
         <div style="height:220px; border-radius:14px; overflow:hidden; border:1px solid var(--line); background: linear-gradient(135deg, rgba(195,154,107,.18), rgba(135,167,122,.18)), url('https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop') center/cover"></div>
       </div>
@@ -215,9 +224,9 @@
   <script>
     // Config
     const SLIDES = [
-      { title: "A Unique Experience", sub: "Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.", image: "assets/zanella_image_1.jpg" },
-      { title: "For an Elegant Evening", sub: "Live sets every weekend. Seasonal menus and low‑lit ambiance.", image: "assets/zanella_image_2.jpg" },
-      { title: "Smart Casual & Professional Setting", sub: "Book the mezzanine for intimate celebrations and brand socials.", image: "assets/zanella_image_3.jpg" }
+      { title: "An Elevated Night Out", sub: "Curated design. Effortless evenings", image: "assets/zanella_image_1.jpg" },
+      { title: "Elevated Social. Effortless Vibe.", sub: "Concrete, wood, plants, and light — built for connection.", image: "assets/zanella_image_2.jpg" },
+      { title: "Smart Casual & Professional Setting", sub: "Refined space. Smart-casual nights. Your table, your people.", image: "assets/zanella_image_3.jpg" }
     ];
     const TICKET_URL = "https://your-ticketing-url.example.com";
 
