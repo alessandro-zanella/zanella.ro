@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zanella Lounge</title>
+  <meta name="description" content="Zanella Lounge — a smart‑casual lounge to eat, drink, and socialize in an elegant, modern setting." />
+  <style>
+    /* ZANELLA LOUNGE — THEME */
+    :root{
+      --bg:#171b1f; --bg-elev:#21262c; --text:#f2f4f6; --muted:#b5bcc3;
+      --accent:#87a77a; --accent-2:#c39a6b; --accent-3:#5fb38c; --line:#2f353b;
+      --max:1120px; --radius:20px; --shadow:0 10px 30px rgba(0,0,0,.3);
+      --dur-fast:.25s; --dur-med:.6s; --easing:cubic-bezier(.16,1,.3,1);
+    }
+    *, *::before, *::after { box-sizing:border-box; }
+    html, body { height:100%; }
+    body{ margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+      color:var(--text); background:var(--bg); line-height:1.6; letter-spacing:.2px; overflow-x:hidden; }
+    img{max-width:100%; display:block;} a{color:inherit; text-decoration:none}
+    .container{width:100%; max-width:var(--max); margin-inline:auto; padding:0 20px}
+
+    .section{padding:64px 0} @media(min-width:768px){ .section{padding:96px 0} }
+
+    /* Ambient background + grain */
+    .ambient{ position:fixed; inset:-20%; z-index:-3; pointer-events:none; filter:blur(40px) saturate(108%); opacity:.85; background:
+      radial-gradient(70rem 60rem at 20% 20%, rgba(195,154,107,.16), transparent 60%),
+      radial-gradient(80rem 60rem at 80% 80%, rgba(135,167,122,.18), transparent 60%),
+      radial-gradient(60rem 50rem at 50% -10%, rgba(255,255,255,.06), transparent 60%);
+      animation: drift 28s var(--easing) infinite alternate; }
+    body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:-2; background: repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 6px); opacity:.35; animation: grain 12s linear infinite; mix-blend-mode: soft-light; }
+    @keyframes drift{ 0%{ transform: translate3d(0,0,0) scale(1);} 100%{ transform: translate3d(-3%,2%,0) scale(1.08);} }
+    @keyframes grain{ 0%{ transform:translate(0,0)} 100%{ transform:translate(-24px,12px)} }
+
+    /* Particle canvas behind content */
+    #particles{ position:fixed; inset:0; z-index:-1; display:block; }
+
+    /* UI */
+    .chip{display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .8rem; background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:999px; color:var(--muted)}
+    .chip--green{ border-color: color-mix(in oklab, var(--accent-3) 60%, var(--line)); color: color-mix(in oklab, var(--accent-3) 75%, var(--muted)); background: rgba(95,179,140,.08); }
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:.9rem 1.2rem; border-radius:14px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); box-shadow:var(--shadow); transition:transform var(--dur-fast) var(--easing), background var(--dur-fast) var(--easing), border-color var(--dur-fast) var(--easing)}
+    .btn:hover{ transform:translateY(-2px); border-color:rgba(195,154,107,.6); }
+    .btn-primary{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 88%, white 8%), color-mix(in oklab, var(--accent-2) 64%, black 0%)); color:#1b1b1b; border-color:rgba(195,154,107,.9)}
+    .btn-primary:hover{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 96%, white 4%), color-mix(in oklab, var(--accent-2) 75%, black 0%));}
+    .btn-green{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-3) 88%, white 6%), color-mix(in oklab, var(--accent-3) 64%, black 0%)); color:#0f1512; border-color: color-mix(in oklab, var(--accent-3) 80%, black 20%); }
+    .btn-gold{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 88%, white 6%), color-mix(in oklab, var(--accent-2) 64%, black 0%)); color:#1b1b1b; border-color: color-mix(in oklab, var(--accent-2) 80%, black 20%); }
+    .btn-ghost{ background:rgba(255,255,255,.06); color:var(--text) }
+
+    .card{background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
+    .grid{display:grid; gap:20px}
+    @media(min-width:768px){ .grid-2{grid-template-columns:repeat(2, minmax(0,1fr));} }
+
+    /* Sticky Nav */
+    .nav{ position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(10px); background:rgba(23,27,31,.6); border-bottom:1px solid var(--line) }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px }
+    .brand{ display:flex; align-items:center; gap:.75rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase }
+    .brand-mark{ width:28px; height:28px; border-radius:8px; background: conic-gradient(from 180deg, var(--accent-2), var(--accent), var(--accent-2)); box-shadow:0 0 0 2px rgba(0,0,0,.35) inset }
+    .nav a{ color:var(--muted); font-size:.95rem } .nav a:hover{ color:var(--text) }
+    .nav-links{ display:flex; gap:1rem }
+
+    /* HERO */
+    .hero{ position:relative; min-height: 82vh; display:grid; place-items:center; overflow:hidden; }
+    .hero-media{ position:absolute; inset:0; pointer-events:none }
+    .slide{ position:absolute; inset:0; opacity:0; transform:scale(1.04); transition: opacity var(--dur-med) var(--easing), transform 1.2s var(--easing); background-size:cover; background-position:center; filter: saturate(.95) contrast(.96) brightness(.92) }
+    .slide.active{ opacity:1; transform:scale(1); }
+    .hero-overlay{ position:absolute; inset:0; background: radial-gradient(60rem 40rem at 50% 0%, rgba(0,0,0,.22), rgba(0,0,0,.55)), linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.72) 100%) }
+    .hero-content{ position:relative; text-align:center; padding: 0 20px; }
+    .hero h1{ font-size: clamp(2rem, 5vw, 3.6rem); line-height:1.1; margin:0 0 .8rem; }
+    .hero h1 .accent{ color: var(--accent-3); text-shadow: 0 0 18px rgba(95,179,140,.25); }
+    .hero p{ color:var(--muted); margin:.5rem auto 1.2rem; max-width:36rem }
+    .hero-ctas{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap }
+
+    /* Tickets */
+    .tickets{ position:relative } .tickets .card{ overflow:hidden }
+    .woodbar{ height:8px; background: linear-gradient(90deg, #a77d48, #c39a6b, #a77d48); opacity:.9 }
+    .ticket-body{ padding:24px }
+    .ticket-title{ font-size: clamp(1.25rem, 3.4vw, 1.6rem); margin:0 0 .5rem }
+    .ticket-sub{ color:var(--muted); margin:0 0 1rem }
+    .ticket-actions{ display:flex; gap:.6rem; flex-wrap:wrap }
+    .inline-note{ font-size:.85rem; color:var(--muted) }
+
+    /* About */
+    .about .features{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem }
+    .about p{ margin: .5rem 0 0; color:var(--muted)}
+
+    /* Contact */
+    form{ display:grid; gap:.8rem }
+    .field{ display:grid; gap:.4rem }
+    label{ font-size:.95rem; color:var(--muted) }
+    input, textarea{ width:100%; padding: .9rem 1rem; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text); outline:none; transition:border var(--dur-fast) var(--easing) }
+    input:focus, textarea:focus{ border-color: var(--accent-2) }
+    textarea{ min-height:120px; resize:vertical }
+
+    /* Footer */
+    footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform: translateY(14px); transition: opacity var(--dur-med) var(--easing), transform var(--dur-med) var(--easing) }
+    .reveal.visible{ opacity:1; transform:none }
+
+    @media (prefers-reduced-motion: reduce){ .slide, .reveal, .btn{ transition:none } .ambient, body::before{ animation:none } }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="brand" aria-label="Zanella Lounge">
+        <img src="assets/ZANELLA%20LOGO%20WHITE.png" alt="Zanella Lounge" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#tickets">Tickets</a><a href="#about">About</a><a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="core" class="hero section" aria-label="Core Offer">
+    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-content container">
+      <div class="chip chip--green" style="margin-bottom:10px">Smart‑casual • Warm industrial • Green accents</div>
+      <h1 id="heroHeadline">Dine. Drink. <span class="accent">Gather.</span></h1>
+      <p id="heroSub">Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.</p>
+      <div class="hero-ctas"><a class="btn btn-gold" href="#tickets">Reserve a Table</a><a class="btn btn-ghost" href="#about">Explore the Lounge</a></div>
+    </div>
+  </section>
+
+  <section id="about" class="about section">
+    <div class="container">
+      <div class="grid grid-2">
+        <div class="reveal">
+          <h2>About Us</h2>
+          <p>Zanella Lounge blends concrete textures with warm wood grains and biophilic design. Our chefs and bartenders craft seasonal menus for slow evenings and lively nights alike.</p>
+          <div class="features">
+            <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M4 12c0-4 3-7 8-7s8 3 8 7M4 12c0 4 3 7 8 7s8-3 8-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Elevated Comfort Food</span>
+            <span class="chip chip--green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 20l6-16 6 16M9.5 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Craft Cocktails</span>
+            <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Music & Social Nights</span>
+          </div>
+        </div>
+        <div class="card reveal" style="overflow:hidden">
+          <div style="aspect-ratio:4/3; background:linear-gradient(135deg, rgba(135,167,122,.2), rgba(195,154,107,.2)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1500&auto=format&fit=crop') center/cover; filter:saturate(.96) contrast(.97) brightness(.95)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- <section id="tickets" class="tickets section">
+    <div class="container grid grid-2">
+      <div class="card reveal">
+        <div class="woodbar" aria-hidden="true"></div>
+        <div class="ticket-body">
+          <h2 class="ticket-title">Upcoming Night • Saturday Jazz & Mixology</h2>
+          <p class="ticket-sub">Limited seats. Early birds get a craft cocktail on us. Dress code: smart casual.</p>
+          <div class="ticket-actions">
+            <a class="btn btn-primary" id="ticketBtn" href="https://your-ticketing-url.example.com" target="_blank" rel="noopener">Buy Tickets</a>
+            <a class="btn" href="#contact">Ask a question</a>
+          </div>
+          <p class="inline-note">Your purchase opens on a third‑party site.</p>
+        </div>
+      </div>
+      <div class="card reveal" style="overflow:hidden">
+        <div style="aspect-ratio:16/10; background:linear-gradient(135deg, rgba(195,154,107,.25), rgba(135,167,122,.25)), url('https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1500&auto=format&fit=crop') center/cover; filter:saturate(.95) contrast(.96) brightness(.94)"></div>
+        <div class="ticket-body"><h3 style="margin:0 0 .25rem">Members’ Table</h3><p class="ticket-sub">Get early invites and tasting menus. Join the circle for seasonal drops.</p><a class="btn" href="#contact">Join the waitlist</a></div>
+      </div>
+    </div>
+  </section> -->
+
+ 
+  <section id="contact" class="section">
+    <div class="container grid grid-2">
+      <div class="reveal">
+        <h2>Contact</h2>
+        <p class="inline-note">Questions about private bookings or upcoming events? Drop us a note.</p>
+        <div id="contactInfo" style="display:grid; gap:.6rem; align-items:start">
+          <p class="inline-note">Prefer to reach us directly? Call or email — we'll get back shortly.</p>
+          <div style="display:flex; gap:.6rem; flex-wrap:wrap">
+            <a class="btn btn-gold" href="tel:+40123456789" aria-label="Call Zanella Lounge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 16.92v3.08a1 1 0 0 1-1.08 1A19 19 0 0 1 3.08 3.08 1 1 0 0 1 4.08 2h3.08a1 1 0 0 1 1 .75c.12.5.32 1.02.6 1.5l-.9.9a1 1 0 0 0-.22 1.11 12.36 12.36 0 0 0 5.23 5.23 1 1 0 0 0 1.11-.22l.9-.9c.48.28 1 .48 1.5.6a1 1 0 0 1 .75 1V16.92z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              +40770388369
+            </a>
+            <a class="btn" href="mailto:hello@zanellalounge.example" aria-label="Email Zanella Lounge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8.2v7.6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 6H3v2.2l9 6 9-6V6z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              zan15592@gmail.com
+            </a>
+          </div>
+          <div style="margin-top:.4rem; display:flex; gap:.6rem; align-items:center; flex-wrap:wrap">
+            <a class="btn btn-ghost" href="https://www.instagram.com/zanella_lounge/" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.8 6.2h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+             Instagram</a>
+            <a class="btn btn-ghost" href="https://www.facebook.com/profile.php?id=61580371774552" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v7h4v-7h3l1-4h-4V6a1 1 0 0 1 1-1h3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Facebook</a>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="padding:22px">
+        <h3 style="margin-top:0">Visit</h3>
+        <p>Strada Ciocarliei 15, Cluj‑Napoca</p>
+        <p class="inline-note">Open Tue–Sun · 17:00–01:00</p>
+        <div style="height:220px; border-radius:14px; overflow:hidden; border:1px solid var(--line); background: linear-gradient(135deg, rgba(195,154,107,.18), rgba(135,167,122,.18)), url('https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop') center/cover"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <span>&copy; <span id="year"></span> Zanella Lounge</span>
+      <span style="display:flex; gap:12px"><a href="https://www.instagram.com/zanella_lounge/">Instagram</a><a href="https://www.facebook.com/profile.php?id=61580371774552">Facebook</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // Config
+    const SLIDES = [
+      { title: "A Unique Experience", sub: "Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.", image: "assets/zanella_image_1.jpg" },
+      { title: "For an Elegant Evening", sub: "Live sets every weekend. Seasonal menus and low‑lit ambiance.", image: "assets/zanella_image_2.jpg" },
+      { title: "Smart Casual & Professional Setting", sub: "Book the mezzanine for intimate celebrations and brand socials.", image: "assets/zanella_image_3.jpg" }
+    ];
+    const TICKET_URL = "https://your-ticketing-url.example.com";
+
+    // Elements
+    const heroMedia = document.getElementById('heroMedia');
+    const heroHeadline = document.getElementById('heroHeadline');
+    const heroSub = document.getElementById('heroSub');
+    const ticketBtn = document.getElementById('ticketBtn');
+
+    // Hero rotator
+    let current = 0, rotator = null, rotatorRunning = false;
+    function mountSlides(){ heroMedia.innerHTML = SLIDES.map((s,i)=>`<div class="slide${i===0?' active':''}" style="background-image:url('${s.image}')"></div>`).join(''); heroHeadline.textContent = SLIDES[0].title; heroSub.textContent = SLIDES[0].sub; }
+    function nextSlide(){ const slides=[...heroMedia.querySelectorAll('.slide')]; const prev=current; current=(current+1)%SLIDES.length; slides[prev].classList.remove('active'); slides[current].classList.add('active'); heroHeadline.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-6px)'}],{duration:180,easing:'ease-out'}).onfinish=()=>{ heroHeadline.textContent=SLIDES[current].title; heroHeadline.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:220,easing:'ease-out'}); }; heroSub.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-6px)'}],{duration:180,easing:'ease-out'}).onfinish=()=>{ heroSub.textContent=SLIDES[current].sub; heroSub.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:220,easing:'ease-out'}); }; }
+    function startRotator(){ if(rotatorRunning) return; stopRotator(); rotator=setInterval(nextSlide,5000); rotatorRunning=true; }
+    function stopRotator(){ if(rotator){ clearInterval(rotator); rotator=null; } rotatorRunning=false; }
+
+    // Reveal
+    const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } }) }, {threshold:.14});
+    function enableReveal(){ document.querySelectorAll('.reveal').forEach(el=> io.observe(el)); }
+
+    // Smooth anchors
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{ a.addEventListener('click', (e)=>{ const id=a.getAttribute('href'); if(id.length>1){ e.preventDefault(); const el=document.querySelector(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); } }); });
+
+    // Particles
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d');
+    let W=0, H=0, particles=[], raf=null, particlesRunning=false;
+    const MAX_LINKS_PER=3, LINK_DIST=110;
+    function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; if(particles.length){ particles.forEach(p=>{ p.x=Math.random()*W; p.y=Math.random()*H; }); } }
+    window.addEventListener('resize', resize);
+    function makeParticles(count=80){ particles = Array.from({length:count}, ()=>({ x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35, r:Math.random()*1.6+.8, c:Math.random()>.5?'rgba(195,154,107,.65)':'rgba(222,186,120,.7)', links:0 })); }
+    function draw(){ ctx.clearRect(0,0, W,H); for(let i=0;i<particles.length;i++){ const p=particles[i]; p.links=0; for(let j=i+1;j<particles.length && p.links<MAX_LINKS_PER;j++){ const q=particles[j]; const dx=p.x-q.x, dy=p.y-q.y; const d=Math.hypot(dx,dy); if(d<LINK_DIST){ ctx.globalAlpha=(LINK_DIST-d)/LINK_DIST*.12; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.strokeStyle='rgba(195,154,107,1)'; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1; p.links++; } } }
+      for(const p of particles){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W) p.vx*=-1; if(p.y<0||p.y>H) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.fill(); }
+      raf=requestAnimationFrame(draw);
+    }
+
+    function startParticles(){ if(particlesRunning) return; resize(); makeParticles(window.innerWidth<640?50:90); if(!prefersReduced){ particlesRunning=true; draw(); } else { ctx.clearRect(0,0,W,H); for(const p of particles){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.fill(); } } }
+    function stopParticles(){ if(raf) cancelAnimationFrame(raf); raf=null; particlesRunning=false; }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', ()=>{
+      mountSlides(); startRotator(); enableReveal();
+      const yearEl=document.getElementById('year'); if(yearEl) yearEl.textContent=new Date().getFullYear();
+      if(ticketBtn) ticketBtn.href=TICKET_URL;
+      startParticles();
+    });
+
+    // Visibility handling (guarded to avoid duplicate starts)
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ stopRotator(); stopParticles(); } else { startRotator(); startParticles(); } });
+
+    // --- Minimal self-tests (run after load) ---
+    function test(name, ok){ console[(ok?'log':'error')](`TEST ${ok?'PASS':'FAIL'}: ${name}`); }
+    window.addEventListener('load', ()=>{
+      test('SLIDES populated', SLIDES.length>=1);
+      test('Hero slides mounted', document.querySelectorAll('.slide').length===SLIDES.length);
+      test('Rotator running', !!rotator);
+      test('Particles canvas sized', canvas.width>0 && canvas.height>0);
+    });
+  </script>
+</body>
+</html>
