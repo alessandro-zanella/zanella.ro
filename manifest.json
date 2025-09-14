@@ -1,0 +1,12 @@
+{
+  "name": "Zanella Lounge",
+  "short_name": "Zanella",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#171b1f",
+  "theme_color": "#171b1f",
+  "icons": [
+    { "src": "/assets/Zanella Lounge Profile.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/Zanella Lounge Profile.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
