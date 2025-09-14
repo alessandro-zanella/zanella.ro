@@ -68,8 +68,27 @@
 
     /* HERO */
     .hero{ position:relative; min-height: 82vh; display:grid; place-items:center; overflow:hidden; }
-    .hero-media{ position:absolute; inset:0; pointer-events:none }
-    .slide{ position:absolute; inset:0; opacity:0; transform:scale(1.04); transition: opacity var(--dur-med) var(--easing), transform 1.2s var(--easing); background-size:cover; background-position:center; filter: saturate(.95) contrast(.96) brightness(.92) }
+    .hero-media{
+      position:absolute; inset:0; pointer-events:none;
+      /* Force GPU compositing to avoid scroll jitter on mobile */
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+    }
+    .slide{
+      position:absolute; inset:0; opacity:0; transform:scale(1.04); transition: opacity var(--dur-med) var(--easing), transform 1.2s var(--easing);
+      background-size:cover; background-position:center; filter: saturate(.95) contrast(.96) brightness(.92);
+      /* Improve rendering stability on iOS/Android */
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      will-change: opacity, transform;
+    }
     .slide.active{ opacity:1; transform:scale(1); }
     .hero-overlay{ position:absolute; inset:0; background: radial-gradient(60rem 40rem at 50% 0%, rgba(0,0,0,.22), rgba(0,0,0,.55)), linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.72) 100%) }
     .hero-content{ position:relative; text-align:center; padding: 0 20px; }
