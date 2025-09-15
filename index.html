@@ -137,6 +137,20 @@
     .reveal{ opacity:0; transform: translateY(14px); transition: opacity var(--dur-med) var(--easing), transform var(--dur-med) var(--easing) }
     .reveal.visible{ opacity:1; transform:none }
 
+    /* Pricing alignment — tabular numbers + fixed price column for consistent alignment */
+    .pricing-list { display:grid; gap:.6rem; margin-top:.6rem; }
+    .pricing-row{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.6rem; border-radius:10px; background:rgba(255,255,255,.02); border:1px solid var(--line);
+    }
+    .pricing-row .meta{ font-size:.95rem; color:var(--muted); max-width:70%; }
+    .pricing-row .price{
+      min-width:110px; text-align:right; font-weight:700;
+      /* ensures digits use fixed-width figures so alignment stays consistent */
+      font-variant-numeric: tabular-nums;
+      white-space:nowrap;
+    }
+
     @media (prefers-reduced-motion: reduce){ .slide, .reveal, .btn{ transition:none } .ambient, body::before{ animation:none } }
   </style>
 </head>
@@ -185,37 +199,68 @@
     </div>
   </section>
 
-
-  <!-- <section id="tickets" class="tickets section">
-    <div class="container grid grid-2">
-      <div class="card reveal">
-        <div class="woodbar" aria-hidden="true"></div>
-        <div class="ticket-body">
-          <h2 class="ticket-title">Upcoming Night • Saturday Jazz & Mixology</h2>
-          <p class="ticket-sub">Limited seats. Early birds get a craft cocktail on us. Dress code: smart casual.</p>
-          <div class="ticket-actions">
-            <a class="btn btn-primary" id="ticketBtn" href="https://your-ticketing-url.example.com" target="_blank" rel="noopener">Buy Tickets</a>
-            <a class="btn" href="#contact">Ask a question</a>
-          </div>
-          <p class="inline-note">Your purchase opens on a third‑party site.</p>
-        </div>
-      </div>
-      <div class="card reveal" style="overflow:hidden">
-        <div style="aspect-ratio:16/10; background:linear-gradient(135deg, rgba(195,154,107,.25), rgba(135,167,122,.25)), url('https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1500&auto=format&fit=crop') center/cover; filter:saturate(.95) contrast(.96) brightness(.94)"></div>
-        <div class="ticket-body"><h3 style="margin:0 0 .25rem">Members’ Table</h3><p class="ticket-sub">Get early invites and tasting menus. Join the circle for seasonal drops.</p><a class="btn" href="#contact">Join the waitlist</a></div>
-      </div>
-    </div>
-  </section> -->
-
-   <!-- Pricing — Stripe hosted pricing table -->
-  <section id="pricing" class="section">
+  <!-- Events — host your evening at Zanella Lounge -->
+  <section id="events" class="section">
     <div class="container">
-      <div class="reveal">
-        <h1> Book Now & Save Up to 20% </h1>
-          <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-          <stripe-pricing-table pricing-table-id="prctbl_1S7EWO9YkpyeTvHmDvSNYb8U"
-          publishable-key="pk_test_51S6VoV9YkpyeTvHmm3xfrZf8fXh90xa2Gh1BKjbzTYXnY8CvX3SCOgNMarzmb2gvnmpaxVIdqepZFaHlVrOesnNZ00EobRgm4T">
-          </stripe-pricing-table>
+      <div class="grid grid-2">
+        <div class="reveal">
+          <h2>Host Your Evening With Us</h2>
+          <p>Whether it's a birthday, product launch, intimate concert, or a curated tasting for friends and colleagues, ZANELLA Lounge offers a warm-industrial setting with hosted service and craft cocktails. We handle the details so you can focus on the moment — sound, lighting, and a menu tailored to your night.</p>
+          <ul style="margin-top:1rem; list-style:none; padding:0; display:grid; gap:.6rem;">
+            <li class="chip">Dedicated host & curated cocktail programme</li>
+            <li class="chip chip--green">Flexible seating & private Social Suites</li>
+            <li class="chip">Onsite AV options and customizable playlists</li>
+          </ul>
+          <p style="margin-top:1rem" class="inline-note">Interested? Reach out to discuss dates, menus, and capacity — we’ll prepare a personalised proposal.</p>
+          <div style="margin-top:1rem; display:flex; gap:.6rem; flex-wrap:wrap">
+            <a class="btn btn-gold" href="#contact">Enquire About Hosting</a>
+            <a class="btn btn-ghost" href="#about">See The Lounge</a>
+          </div>
+        </div>
+
+        <div class="card reveal" style="padding:20px; overflow:hidden">
+          <div style="aspect-ratio:4/3; border-radius:12px; overflow:hidden; background:linear-gradient(135deg, rgba(135,167,122,.08), rgba(195,154,107,.08)), url('assets/zanella_lounge_location_preview.jpg') center/cover; filter:saturate(.96) contrast(.97) brightness(.95)"></div>
+
+          <div style="margin-top:14px; display:grid; gap:.6rem">
+            <h3 style="margin:0">Pricing & Packages</h3>
+            <p class="inline-note" style="margin:0">Starting rates (RON). Final quote depends on date, guest count and any bespoke requests.</p>
+
+            <div class="pricing-list">
+              <div class="pricing-row">
+                <div class="meta">
+                  <strong>Hourly Hire</strong>
+                  <div style="font-size:.9rem; color:var(--muted)">Pay per hour — ideal for short gatherings (min. 2 hours)</div>
+                </div>
+                <div class="price">RON 200 / oră</div>
+              </div>
+
+              <div class="pricing-row">
+                <div class="meta">
+                  <strong>Multi‑Hour Package (3h)</strong>
+                  <div style="font-size:.9rem; color:var(--muted)">Recommended for intimate events and tastings — includes welcome aperitivo</div>
+                </div>
+                <div class="price">RON 520</div>
+              </div>
+
+              <div class="pricing-row">
+                <div class="meta">
+                  <strong>Evening Hire (5h)</strong>
+                  <div style="font-size:.9rem; color:var(--muted)">Standard evening slot — semi‑private layout and dedicated host</div>
+                </div>
+                <div class="price">RON 950</div>
+              </div>
+
+              <div class="pricing-row">
+                <div class="meta">
+                  <strong>Full‑Day Hire (10h)</strong>
+                  <div style="font-size:.9rem; color:var(--muted)">Exclusive use, bespoke menu & staffing options</div>
+                </div>
+                <div class="price">RON 1.700+</div>
+              </div>
+            </div>
+
+            <p class="inline-note" style="margin:.6rem 0 0">Extras (live music, AV, custom menu, cocktails) are quoted separately. Contact us for availability and a personalised proposal.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -257,8 +302,6 @@
       </div>
     </div>
   </section>
-
-
 
   <footer>
     <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
