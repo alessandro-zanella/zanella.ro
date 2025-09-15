@@ -153,6 +153,28 @@ footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
 #embeddedMenu .pricing-list{ margin-top:.6rem }
 @media (prefers-reduced-motion: reduce){ #embeddedMenu, #embeddedMenu.open{ transition:none; transform:none; } }
 
+/* Full-bleed Menu Section with background image */
+#menuSection{ position:relative; background-image: url('../assets/zanella_lounge_location_preview.jpg'); background-size:cover; background-position:center; padding:72px 0; }
+#menuSection::before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(23,27,31,.36), rgba(23,27,31,.6)); z-index:0; }
+#menuSection .container{ position:relative; z-index:1; }
+
+/* Centered overlay panel for the embedded menu */
+#embeddedMenu.card{ background: rgba(23,27,31,.72); border:1px solid rgba(255,255,255,.04); box-shadow: 0 12px 40px rgba(0,0,0,.45); border-radius:14px; max-width:var(--max); margin:14px auto 0; }
+#embeddedMenu.card h3{ color:var(--text); }
+
+/* Make the embedded menu more prominent on small screens */
+@media(max-width:640px){ #menuSection{ padding:48px 0; } #embeddedMenu.card{ margin:12px 18px 0; padding:14px; } }
+
+/* Contact section full-bleed + panel styling (matches menu look) */
+#contact{ position:relative; background-image: url('../assets/zanella_image_2.jpg'); background-size:cover; background-position:center; padding:72px 0; }
+#contact::before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(23,27,31,.28), rgba(23,27,31,.6)); z-index:0; }
+#contact .container{ position:relative; z-index:1; }
+
+#contact .card{ background: rgba(23,27,31,.72); border:1px solid rgba(255,255,255,.04); box-shadow: 0 12px 40px rgba(0,0,0,.45); border-radius:14px; }
+#contact .card h3{ color:var(--text); }
+
+@media(max-width:640px){ #contact{ padding:48px 0 } #contact .card{ padding:14px } }
+
 /* Menu page tweaks */
 .menu-page .hero-media{ background-position:center top; filter: saturate(.95) contrast(.94) brightness(.86); }
 .menu-page .hero-content h1{ font-size: clamp(2.2rem, 6vw, 3.2rem); margin-bottom:.25rem; }
