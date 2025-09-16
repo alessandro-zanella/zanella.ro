@@ -37,13 +37,13 @@
     <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content container">
-      <div class="chip chip--green" style="margin-bottom:10px">Smart‑casual • Warm industrial • Green accents</div>
+      <div class="chip chip--green" style="margin-bottom:10px">Elegance • Warm industrial • Green Accents</div>
       <h1 id="heroHeadline">Dine. Drink. <span class="accent">Gather.</span></h1>
       <p id="heroSub">Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.</p>
       <div class="hero-ctas">
-        <a class="btn btn-gold" href="#contact">Contact Us</a>
-        <a class="btn btn-ghost" href="#about">Explore Zanella Lounge</a>
-        <a class="btn btn-gold" href="#menuSection">See Menu</a>
+        <a class="btn btn-gold" href="#contact">Contact</a>
+        <a class="btn btn-ghost" href="#about">Zanella Lounge</a>
+        <a class="btn btn-gold" href="#menuSection">Menu</a>
       </div>
     </div>
   </section>
@@ -252,7 +252,22 @@
     function enableReveal(){ document.querySelectorAll('.reveal').forEach(el=> io.observe(el)); }
 
     // Smooth anchors
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{ a.addEventListener('click', (e)=>{ const id=a.getAttribute('href'); if(id.length>1){ e.preventDefault(); const el=document.querySelector(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); } }); });
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id=a.getAttribute('href');
+        if(id.length>1){
+          e.preventDefault();
+          const el=document.querySelector(id);
+          if(el){
+            el.scrollIntoView({behavior:'smooth', block:'start'});
+            // If navigating to the menu section, open the embedded menu automatically
+            if(id === '#menuSection'){
+              setTimeout(()=>{ window.openEmbeddedMenu?.(); }, 420);
+            }
+          }
+        }
+      });
+    });
 
     // Particles
     const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -297,6 +312,9 @@
 
   function openMenu(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
   function closeMenu(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+  // expose for programmatic control
+  window.openEmbeddedMenu = openMenu;
+  window.closeEmbeddedMenu = closeMenu;
 
       btn.addEventListener('click', ()=>{ panel.classList.contains('open')? closeMenu() : openMenu(); });
 
@@ -313,8 +331,10 @@
       const panel = document.getElementById('embeddedPricing');
       if(!btn || !panel) return;
 
-      function openPricing(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide rental pricing'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
-      function closePricing(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show rental pricing'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+  function openPricing(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide rental pricing'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
+  function closePricing(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show rental pricing'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+  window.openEmbeddedPricing = openPricing;
+  window.closeEmbeddedPricing = closePricing;
 
       btn.addEventListener('click', ()=>{ panel.classList.contains('open')? closePricing() : openPricing(); });
 
