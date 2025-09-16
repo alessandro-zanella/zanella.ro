@@ -131,7 +131,12 @@
             <h3 style="margin:0">Pricing & Packages</h3>
             <p class="inline-note" style="margin:0">Starting rates (RON). Final quote depends on date, guest count and any bespoke requests.</p>
 
-            <div class="pricing-list">
+            <div style="margin-top:8px">
+              <button id="pricingToggleBtn" class="btn btn-ghost" aria-controls="embeddedPricing" aria-expanded="false">Show rental pricing</button>
+            </div>
+
+            <div id="embeddedPricing" class="bg-panel embedded-panel" style="margin-top:12px; padding:12px;" aria-hidden="true">
+              <div class="pricing-list">
               <div class="pricing-row">
                 <div class="meta">
                   <strong>Hourly Hire</strong>
@@ -162,6 +167,7 @@
                   <div style="font-size:.9rem; color:var(--muted)">Exclusive use, bespoke menu & staffing options</div>
                 </div>
                 <div class="price">RON 1.700+</div>
+              </div>
               </div>
             </div>
 
@@ -299,6 +305,21 @@
 
       // click outside to close (respecting button)
       document.addEventListener('click', (e)=>{ if(!panel.classList.contains('open')) return; if(panel.contains(e.target) || btn.contains(e.target)) return; closeMenu(); });
+    })();
+
+    // Embedded pricing toggle (mirror of menu toggle)
+    (function(){
+      const btn = document.getElementById('pricingToggleBtn');
+      const panel = document.getElementById('embeddedPricing');
+      if(!btn || !panel) return;
+
+      function openPricing(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide rental pricing'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
+      function closePricing(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show rental pricing'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+
+      btn.addEventListener('click', ()=>{ panel.classList.contains('open')? closePricing() : openPricing(); });
+
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && panel.classList.contains('open')) closePricing(); });
+      document.addEventListener('click', (e)=>{ if(!panel.classList.contains('open')) return; if(panel.contains(e.target) || btn.contains(e.target)) return; closePricing(); });
     })();
   </script>
 </body>
