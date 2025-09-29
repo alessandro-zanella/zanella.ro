@@ -327,7 +327,37 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 /* canvas overlay for premium particle animation */
 .premium-canvas{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; opacity:1 }
 
+/* Three visual variants for pricing rows: gold (opaque gold), silver (opaque silver), gray (minimal) */
+.gold-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
+  position:relative; overflow:hidden; /* allow canvas overlay */
+  background: linear-gradient(90deg, rgba(195,154,107,.5), rgba(195,154,107,.45)); border:1px solid rgba(189,143,79,.6);
+}
+.gold-row .meta{ color:#fff; font-weight:700 }
+.gold-row .price{ color:#fff; font-weight:900 }
+
+.silver-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
+  position:relative; overflow:hidden; /* allow canvas overlay */
+  background: linear-gradient(90deg, rgba(230,230,230,.5), rgba(210,210,210,.45)); border:1px solid rgba(200,200,200,.6);
+}
+.silver-row .meta{ color:#fff; font-weight:700 }
+.silver-row .price{ color:#fff; font-weight:800 }
+
+.gray-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.5rem 0; border-radius:6px;
+  background: transparent; border:none;
+}
+.gray-row .meta{ color:var(--muted); font-weight:500 }
+.gray-row .price{ color:var(--muted); font-weight:600 }
+
+/* per-row overlay canvas for subtle particles */
+.row-canvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; }
+.gold-row > *:not(.row-canvas), .silver-row > *:not(.row-canvas) { position:relative; z-index:1; }
+
   </style>
+</head>
+<body>
 </head>
 <body>
   <div class="ambient" aria-hidden="true"></div>
@@ -393,20 +423,6 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
         </div>
 
   <div id="embeddedMenu" class="card embedded-menu-wrapper" aria-hidden="true">
-          <div class="premium-panel">
-            <canvas class="premium-canvas" id="premiumCanvas" aria-hidden="true"></canvas>
-            <h3 style="margin:0">🌟 Exclusive &amp; Premium Highlights</h3>
-            <div class="premium-note">(Curated for refined tastes)</div>
-            <div style="margin-top:.6rem">
-              <div class="premium-row"><div class="meta">Dom Pérignon Brut Vintage (750ml Bottle)</div><div class="price"><span class="amount">1,200</span><span class="currency">RON</span></div></div>
-              <div class="premium-row"><div class="meta">Hennessy XO Cognac (40 ml)</div><div class="price"><span class="amount">150</span><span class="currency">RON</span></div></div>
-              <div class="premium-row"><div class="meta">Clase Azul Reposado Tequila (40 ml)</div><div class="price"><span class="amount">180</span><span class="currency">RON</span></div></div>
-              <div class="premium-row"><div class="meta">Johnnie Walker Blue Label (40 ml)</div><div class="price"><span class="amount">140</span><span class="currency">RON</span></div></div>
-              <div class="premium-row"><div class="meta">Macallan 18 Sherry Oak (40 ml)</div><div class="price"><span class="amount">220</span><span class="currency">RON</span></div></div>
-              <div class="premium-row"><div class="meta"><strong>Zanella Gold Martini</strong><div style="font-size:.9rem; color:rgba(255,255,255,.9)">Our signature luxury cocktail with saffron &amp; 24k gold leaf.</div></div><div class="price"><span class="amount">220</span><span class="currency">RON</span></div></div>
-            </div>
-          </div>
-
           
           <div class="pricing-list">
             <h4 style="margin:.6rem 0 0">Beers</h4>
@@ -634,6 +650,8 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       const yearEl=document.getElementById('year'); if(yearEl) yearEl.textContent=new Date().getFullYear();
       if(ticketBtn) ticketBtn.href=TICKET_URL;
       startParticles();
+      // initial random styles for pricing rows
+      try{ window.randomizePricingLooks && window.randomizePricingLooks(); }catch(e){}
     });
 
     // Visibility handling (only control particles since there is no rotator)
@@ -652,8 +670,10 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       const btn = document.getElementById('menuToggleBtn');
       const panel = document.getElementById('embeddedMenu');
       if(!btn || !panel) return;
-
-  function openMenu(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
+  function openMenu(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus();
+    // apply randomized looks when opening
+    try{ window.randomizePricingLooks && window.randomizePricingLooks(); }catch(e){}
+  }
   function closeMenu(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
   // expose for programmatic control
   window.openEmbeddedMenu = openMenu;
@@ -683,6 +703,81 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && panel.classList.contains('open')) closePricing(); });
       document.addEventListener('click', (e)=>{ if(!panel.classList.contains('open')) return; if(panel.contains(e.target) || btn.contains(e.target)) return; closePricing(); });
+    })();
+
+    // Randomize pricing row looks (temporary visual demo) — with per-row colored particles for gold/silver
+    (function(){
+      function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+      function createCanvas(row){
+        // remove existing canvas
+        const existing = row.querySelector('.row-canvas');
+        if(existing) existing.remove();
+        const c = document.createElement('canvas');
+        c.className = 'row-canvas';
+        row.prepend(c);
+        // size and animate
+        const ctx = c.getContext('2d');
+        function resize(){
+          const ratio = window.devicePixelRatio || 1;
+          const rect = c.getBoundingClientRect();
+          c.width = Math.max(1, Math.round(rect.width * ratio));
+          c.height = Math.max(1, Math.round(rect.height * ratio));
+          c.style.width = rect.width + 'px';
+          c.style.height = rect.height + 'px';
+          ctx.setTransform(ratio,0,0,ratio,0,0);
+        }
+        resize();
+        const particles = Array.from({length:6}, ()=>({ x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.6, vy:(Math.random()-.5)*.3, r: Math.random()*2 + .6, life: Math.random()*80 + 40 }));
+        let rafId=null;
+        function draw(color){
+          ctx.clearRect(0,0,c.width,c.height);
+          for(const p of particles){
+            p.x += p.vx; p.y += p.vy; p.life--;
+            if(p.x<0||p.x>c.width) p.vx *= -1;
+            if(p.y<0||p.y>c.height) p.vy *= -1;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fillStyle = color; ctx.globalAlpha = 0.65; ctx.fill(); ctx.globalAlpha = 1;
+            if(p.life<=0){ Object.assign(p, { x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.6, vy:(Math.random()-.5)*.3, r: Math.random()*2 + .6, life: Math.random()*80 + 40 }); }
+          }
+          rafId = requestAnimationFrame(()=> draw(color));
+        }
+        // return control functions
+        return { resize, start: draw, stop: ()=>{ if(rafId) cancelAnimationFrame(rafId); rafId=null; ctx.clearRect(0,0,c.width,c.height); } };
+      }
+
+      function applyRandom(){
+        const variants = ['gold-row','silver-row','gray-row'];
+        // target both pricing and premium rows within the embedded menu
+        const rows = document.querySelectorAll('#embeddedMenu .pricing-row, #embeddedMenu .premium-row');
+        rows.forEach(r=>{
+          // remove variant classes but keep any structural classes
+          r.classList.remove('gold-row','silver-row','gray-row');
+          const v = pick(variants);
+          r.classList.add(v);
+          // cleanup any existing animation store
+          if(r._rowAnim){ try{ r._rowAnim.stop(); }catch(e){} r._rowAnim = null; }
+          // attach canvas and animate only for gold/silver
+          if(v === 'gold-row' || v === 'silver-row'){
+            const anim = createCanvas(r);
+            // choose color
+            const color = v==='gold-row' ? 'rgba(255,230,180,0.9)' : 'rgba(200,200,210,0.9)';
+            anim.start(color);
+            // expose so we can stop later
+            r._rowAnim = anim;
+            // ensure resize on window resize
+            const onResize = ()=> anim.resize();
+            window.addEventListener('resize', onResize);
+            // store remover
+            r._removeResize = ()=> window.removeEventListener('resize', onResize);
+          } else {
+            // for gray rows ensure any existing canvas removed
+            const ex = r.querySelector('.row-canvas'); if(ex) ex.remove();
+          }
+        });
+      }
+      // expose for manual calls
+      window.randomizePricingLooks = applyRandom;
     })();
 
     // Premium gold particle animation
