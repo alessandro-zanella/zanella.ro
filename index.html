@@ -344,7 +344,15 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 .silver-row .meta{ color:#fff; font-weight:700 }
 .silver-row .price{ color:#fff; font-weight:800 }
 
+.price-category{ 
+  font-size:1rem; 
+  color:rgba(255,255,255,.85); 
+  margin:.6rem; 
+  margin-top: 2rem;
+  font-weight:400; }
+
 .gray-row{
+  margin-left: .6rem;
   display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.5rem 0; border-radius:6px;
   background: transparent; border:none;
 }
@@ -425,34 +433,34 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
   <div id="embeddedMenu" class="card embedded-menu-wrapper" aria-hidden="true">
           
           <div class="pricing-list">
-            <h4 style="margin:.6rem 0 0">Bubbles (Prosecco & Champagne)</h4>
+            <h4 class="price-category">Bubbles (Prosecco & Champagne)</h4>
             <div class="gold-row"><div class="meta">Dom Pérignon Vintage (Bottle)</div><div class="price"><span class="amount">2200</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Prosecco Superiore DOCG Valdobbiadene (Bottle)</div><div class="price"><span class="amount">280</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Prosecco DOC (Bottle)</div><div class="price"><span class="amount">180</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Moët & Chandon Brut (Bottle)</div><div class="price"><span class="amount">650</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Wines by the Glass (150 ml)</h4>
+            <h4 class="price-category">Wines by the Glass (150 ml)</h4>
             <div class="gold-row"><div class="meta">Boutique Import</div><div class="price"><span class="amount">45</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Italian Pinot Grigio / Merlot</div><div class="price"><span class="amount">35</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">House White</div><div class="price"><span class="amount">22</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">House Red</div><div class="price"><span class="amount">22</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Whiskies (Bottles)</h4>
+            <h4 class="price-category">Whiskies (Bottles)</h4>
             <div class="gold-row"><div class="meta">Macallan 18 Sherry Oak</div><div class="price"><span class="amount">2800</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Johnnie Walker Gold Label</div><div class="price"><span class="amount">750</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Jameson</div><div class="price"><span class="amount">450</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Rums (Bottles)</h4>
+            <h4 class="price-category">Rums (Bottles)</h4>
             <div class="gold-row"><div class="meta">Zacapa XO</div><div class="price"><span class="amount">1200</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Diplomatico Reserva Exclusiva</div><div class="price"><span class="amount">550</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Havana Club 7 Años</div><div class="price"><span class="amount">380</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Vodka & Tequila (Bottles)</h4>
+            <h4 class="price-category">Vodka & Tequila (Bottles)</h4>
             <div class="gold-row"><div class="meta">Clase Azul Reposado</div><div class="price"><span class="amount">3000</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Grey Goose</div><div class="price"><span class="amount">700</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Absolut</div><div class="price"><span class="amount">350</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Cocktails</h4>
+            <h4 class="price-category">Cocktails</h4>
             <div class="gold-row"><div class="meta">Zanella Gold Martini <div style="font-size:.9rem; color:rgba(255,255,255,.9)">(Saffron, Truffle, 24k Gold Leaf)</div></div><div class="price"><span class="amount">220</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Negroni</div><div class="price"><span class="amount">45</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Espresso Martini</div><div class="price"><span class="amount">42</span><span class="currency">lei</span></div></div>
@@ -462,19 +470,19 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
             <div class="gray-row"><div class="meta">Cuba Libre</div><div class="price"><span class="amount">35</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Gin & Tonic</div><div class="price"><span class="amount">35</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Beers</h4>
+            <h4 class="price-category">Beers</h4>
             <div class="gold-row"><div class="meta">Seasonal Specialty Brew (0.33 L)</div><div class="price"><span class="amount">32</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Craft IPA (0.33 L)</div><div class="price"><span class="amount">26</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Imported Lager (0.33 L)</div><div class="price"><span class="amount">22</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Local Draft (0.5 L)</div><div class="price"><span class="amount">18</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Spritz & Light</h4>
+            <h4 class="price-category">Spritz & Light</h4>
             <div class="gold-row"><div class="meta">Prestige Spritz (with Premium Prosecco)</div><div class="price"><span class="amount">55</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Hugo Spritz</div><div class="price"><span class="amount">38</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Aperol Spritz</div><div class="price"><span class="amount">32</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Rosé Spritz</div><div class="price"><span class="amount">30</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Coffees & Teas</h4>
+            <h4 class="price-category">Coffees & Teas</h4>
             <div class="gold-row"><div class="meta">Seasonal Reserve Coffee</div><div class="price"><span class="amount">35</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Latte Macchiato / Iced Latte</div><div class="price"><span class="amount">20-25</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Cappuccino</div><div class="price"><span class="amount">18</span><span class="currency">lei</span></div></div>
@@ -485,7 +493,7 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
             <div class="silver-row"><div class="meta">Curated Herbal Infusion</div><div class="price"><span class="amount">20</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Classic Tea Selection</div><div class="price"><span class="amount">15</span><span class="currency">lei</span></div></div>
 
-            <h4 style="margin:.8rem 0 0">Non-Alcoholic & Mocktails</h4>
+            <h4 class="price-category">Non-Alcoholic & Mocktails</h4>
             <div class="gold-row"><div class="meta">Botanical Reserve Mocktail</div><div class="price"><span class="amount">35</span><span class="currency">lei</span></div></div>
             <div class="silver-row"><div class="meta">Virgin Mojito / Fresh Pressed Juice</div><div class="price"><span class="amount">20-25</span><span class="currency">lei</span></div></div>
             <div class="gray-row"><div class="meta">Soft Drinks</div><div class="price"><span class="amount">12</span><span class="currency">lei</span></div></div>
