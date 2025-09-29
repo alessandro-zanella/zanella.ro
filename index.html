@@ -59,6 +59,7 @@
             <span class="chip chip--green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 20l6-16 6 16M9.5 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Craft Cocktails</span>
             <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Music & Social Nights</span>
           </div>
+          <div style="height:48px;" aria-hidden="true"></div>
         </div>
         <div class="card reveal" style="overflow:hidden">
           <div style="aspect-ratio:4/3; background:linear-gradient(135deg, rgba(135,167,122,.1), rgba(195,154,107,.1)), url('assets/zanella_lounge_location_preview.jpg') center/cover; filter:saturate(.96) contrast(.97) brightness(.95)"></div>
@@ -80,25 +81,55 @@
         </div>
 
   <div id="embeddedMenu" class="card embedded-menu-wrapper" style="margin-top:14px; padding:16px;" aria-hidden="true">
-          <h3 style="margin:0 0 .4rem">Pasta</h3>
-          <div class="pricing-list">
-            <div class="pricing-row"><div class="meta"><strong>Tagliatelle al Ragù</strong><div>Slow‑cooked beef ragù, parmesan</div></div><div class="price">RON 45</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Spaghetti Aglio e Olio</strong><div>Garlic, chilli, olive oil</div></div><div class="price">RON 35</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Penne alla Panna &amp; Funghi</strong><div>Cream, wild mushrooms, pecorino</div></div><div class="price">RON 42</div></div>
+          <div class="premium-panel">
+            <canvas class="premium-canvas" id="premiumCanvas" aria-hidden="true"></canvas>
+            <h3 style="margin:0">🌟 Exclusive &amp; Premium Highlights</h3>
+            <div class="premium-note">(Curated for refined tastes)</div>
+            <div style="margin-top:.6rem">
+              <div class="premium-row"><div class="meta">Dom Pérignon Brut Vintage (750ml Bottle)</div><div class="price">1,200 lei</div></div>
+              <div class="premium-row"><div class="meta">Hennessy XO Cognac (40 ml)</div><div class="price">150 lei</div></div>
+              <div class="premium-row"><div class="meta">Clase Azul Reposado Tequila (40 ml)</div><div class="price">180 lei</div></div>
+              <div class="premium-row"><div class="meta">Johnnie Walker Blue Label (40 ml)</div><div class="price">140 lei</div></div>
+              <div class="premium-row"><div class="meta">Macallan 18 Sherry Oak (40 ml)</div><div class="price">220 lei</div></div>
+              <div class="premium-row"><div class="meta"><strong>Zanella Gold Martini</strong><div style="font-size:.9rem; color:rgba(255,255,255,.9)">Our signature luxury cocktail with saffron &amp; 24k gold leaf.</div></div><div class="price">220 lei</div></div>
+            </div>
           </div>
 
-          <h3 style="margin:12px 0 0">Pizza</h3>
+          <h3 style="margin:0 0 .4rem">🍸 ZANELLA LOUNGE — DRINKS MENU</h3>
           <div class="pricing-list">
-            <div class="pricing-row"><div class="meta"><strong>Margherita</strong><div>San Marzano, fior di latte, basil</div></div><div class="price">RON 38</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Diavola</strong><div>Spicy salami, tomato, mozzarella</div></div><div class="price">RON 48</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Bianca — Burrata</strong><div>Creamy burrata, rosemary oil, lemon</div></div><div class="price">RON 55</div></div>
-          </div>
+            <h4 style="margin:.6rem 0 0">Beers</h4>
+            <div class="pricing-row"><div class="meta">Local Draft (0.5 L)</div><div class="price">18 lei</div></div>
+            <div class="pricing-row"><div class="meta">Premium Imported Bottle</div><div class="price">22 lei</div></div>
 
-          <h3 style="margin:12px 0 0">Salads &amp; Small Plates</h3>
-          <div class="pricing-list">
-            <div class="pricing-row"><div class="meta"><strong>Caesar Salad</strong><div>Romaine, anchovy dressing, parmesan</div></div><div class="price">RON 36</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Rocket &amp; Pear</strong><div>Rocket, pear, walnuts, gorgonzola</div></div><div class="price">RON 34</div></div>
-            <div class="pricing-row"><div class="meta"><strong>Bruschetta Trio</strong><div>Seasonal toppings — great for sharing</div></div><div class="price">RON 29</div></div>
+            <h4 style="margin:.8rem 0 0">Wines by the Glass (150 ml)</h4>
+            <div class="pricing-row"><div class="meta">House White / Red</div><div class="price">22 lei</div></div>
+            <div class="pricing-row"><div class="meta">Premium Selection</div><div class="price">30 lei</div></div>
+
+            <h4 style="margin:.8rem 0 0">Spritz &amp; Light</h4>
+            <div class="pricing-row"><div class="meta">Aperol Spritz</div><div class="price">32 lei</div></div>
+            <div class="pricing-row"><div class="meta">Hugo Spritz</div><div class="price">32 lei</div></div>
+            <div class="pricing-row"><div class="meta">Rosé Spritz</div><div class="price">30 lei</div></div>
+
+            <h4 style="margin:.8rem 0 0">Cocktails</h4>
+            <div class="pricing-row"><div class="meta">Gin &amp; Tonic</div><div class="price">35 lei</div></div>
+            <div class="pricing-row"><div class="meta">Mojito</div><div class="price">38 lei</div></div>
+            <div class="pricing-row"><div class="meta">Cuba Libre</div><div class="price">35 lei</div></div>
+            <div class="pricing-row"><div class="meta">Whiskey Sour</div><div class="price">42 lei</div></div>
+            <div class="pricing-row"><div class="meta">Negroni</div><div class="price">45 lei</div></div>
+            <div class="pricing-row"><div class="meta">Espresso Martini</div><div class="price">42 lei</div></div>
+
+            <h4 style="margin:.8rem 0 0">Zanella Signatures</h4>
+            <div class="pricing-row"><div class="meta"><strong>Zanella Special</strong><div style="font-size:.9rem; color:var(--muted)">Our signature creation, seasonal flavors &amp; premium spirits.</div></div><div class="price">48 lei</div></div>
+            <div class="pricing-row"><div class="meta"><strong>Seasonal Premium Cocktail</strong><div style="font-size:.9rem; color:var(--muted)">Limited edition, crafted fresh for the moment.</div></div><div class="price">45 lei</div></div>
+
+            <h4 style="margin:.8rem 0 0">Shots &amp; Straight</h4>
+            <div class="pricing-row"><div class="meta">Classic Shot (Vodka, Gin, Rum)</div><div class="price">15 lei</div></div>
+            <div class="pricing-row"><div class="meta">Premium Shot (Tequila, Single Malt)</div><div class="price">25 lei</div></div>
+
+            <h4 style="margin:.8rem 0 0">Non-Alcoholic</h4>
+            <div class="pricing-row"><div class="meta">Soft Drinks (Cola, Tonic, Juice)</div><div class="price">12 lei</div></div>
+            <div class="pricing-row"><div class="meta">Virgin Mojito / Berry Lemonade</div><div class="price">20 lei</div></div>
+            <div class="pricing-row"><div class="meta">Water (0.33 L)</div><div class="price">10 lei</div></div>
           </div>
         </div>
       </div>
@@ -340,6 +371,35 @@
 
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && panel.classList.contains('open')) closePricing(); });
       document.addEventListener('click', (e)=>{ if(!panel.classList.contains('open')) return; if(panel.contains(e.target) || btn.contains(e.target)) return; closePricing(); });
+    })();
+
+    // Premium gold particle animation
+    (function(){
+      const canvas = document.getElementById('premiumCanvas');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W=0, H=0, particles=[], rafId=null;
+
+      function resizeCanvas(){ W=canvas.width = canvas.offsetWidth; H=canvas.height = canvas.offsetHeight; }
+
+      function makeParticles(n=30){ particles = Array.from({length:n}, ()=>({ x: Math.random()*W, y: Math.random()*H, vx:(Math.random()-.5)*1.2, vy:(Math.random()*-.8)-.2, r: Math.random()*2 + 1, life: Math.random()*60 + 40 })); }
+
+      function draw(){ ctx.clearRect(0,0,W,H); for(const p of particles){ p.x += p.vx; p.y += p.vy; p.life--; ctx.beginPath(); const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6); g.addColorStop(0, 'rgba(255,243,210,0.95)'); g.addColorStop(0.2, 'rgba(255,223,130,0.9)'); g.addColorStop(0.6, 'rgba(195,154,107,0.28)'); g.addColorStop(1, 'rgba(195,154,107,0)'); ctx.fillStyle = g; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); if(p.life<=0 || p.y< -20 || p.x< -20 || p.x>W+20){ Object.assign(p, { x: Math.random()*W, y: H + Math.random()*30, vx:(Math.random()-.5)*1.2, vy:(Math.random()*-.8)-.2, r: Math.random()*2 + 1, life: Math.random()*60 + 40 }); } }
+        rafId = requestAnimationFrame(draw);
+      }
+
+      function start(){ if(rafId) return; resizeCanvas(); makeParticles(Math.max(18, Math.round((canvas.offsetWidth/300)*25))); draw(); window.addEventListener('resize', resizeCanvas); }
+      function stop(){ if(rafId) cancelAnimationFrame(rafId); rafId=null; window.removeEventListener('resize', resizeCanvas); ctx.clearRect(0,0,canvas.width, canvas.height); }
+
+      // Observe the embedded menu for open state
+      const embedded = document.getElementById('embeddedMenu');
+      if(!embedded) return;
+      const mo = new MutationObserver((list)=>{
+        for(const m of list){ if(m.attributeName==='class'){ const open = embedded.classList.contains('open'); if(open) start(); else stop(); } }
+      });
+      mo.observe(embedded, { attributes:true });
+      // start if already open on load
+      if(embedded.classList.contains('open')) start();
     })();
   </script>
 </body>
