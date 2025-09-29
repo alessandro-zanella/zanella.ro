@@ -181,9 +181,9 @@ footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
 @media (prefers-reduced-motion: reduce){ .slide, .reveal, .btn{ transition:none } .ambient, body::before{ animation:none } }
 
 /* Embedded menu animation (used by #embeddedMenu) */
-.embedded-menu-wrapper{ overflow:hidden; }
+#embedded-menu-wrapper{ overflow:visible; }
 #embeddedMenu{ max-height:0; opacity:0; transform:translateY(-6px); transition: max-height .45s var(--easing), opacity .36s var(--easing), transform .36s var(--easing); }
-#embeddedMenu.open{ max-height: 85vh; opacity:1; transform:translateY(0); overflow:auto; -webkit-overflow-scrolling: touch; padding-bottom:24px; }
+#embeddedMenu.open{ max-height: none; opacity:1; transform:translateY(0); overflow:visible; padding-bottom:24px; }
 #embeddedMenu .pricing-list{ margin-top:.6rem }
 @media (prefers-reduced-motion: reduce){ #embeddedMenu, #embeddedMenu.open{ transition:none; transform:none; } }
 
