@@ -309,4 +309,4 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 .premium-row + .premium-row{ margin-top:1rem }
 
 /* canvas overlay for premium particle animation */
-.premium-canvas{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; }
+.premium-canvas{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; opacity:1 }

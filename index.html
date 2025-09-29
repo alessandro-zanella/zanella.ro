@@ -95,7 +95,7 @@
             </div>
           </div>
 
-          <h3 style="margin:0 0 .4rem">🍸 ZANELLA LOUNGE — DRINKS MENU</h3>
+          
           <div class="pricing-list">
             <h4 style="margin:.6rem 0 0">Beers</h4>
             <div class="pricing-row"><div class="meta">Local Draft (0.5 L)</div><div class="price"><span class="amount">18</span><span class="currency">RON</span></div></div>
@@ -380,16 +380,101 @@
       const ctx = canvas.getContext('2d');
       let W=0, H=0, particles=[], rafId=null;
 
-      function resizeCanvas(){ W=canvas.width = canvas.offsetWidth; H=canvas.height = canvas.offsetHeight; }
+      function resizeCanvas(){
+        const ratio = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        W = Math.round(rect.width) || 0;
+        H = Math.round(rect.height) || 0;
+        // ensure the canvas element has explicit CSS pixel size (helps when 100% height is ambiguous)
+        canvas.style.width = (W || 0) + 'px';
+        canvas.style.height = (H || 0) + 'px';
+        // set backing store to device pixels
+        canvas.width = Math.max(1, Math.round(W * ratio));
+        canvas.height = Math.max(1, Math.round(H * ratio));
+        // scale drawing so coordinates are in CSS pixels
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
 
-      function makeParticles(n=30){ particles = Array.from({length:n}, ()=>({ x: Math.random()*W, y: Math.random()*H, vx:(Math.random()-.5)*1.2, vy:(Math.random()*-.8)-.2, r: Math.random()*2 + 1, life: Math.random()*60 + 40 })); }
+      function makeParticles(n){
+        particles = Array.from({length: n}, ()=>({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          vx: (Math.random()-.5) * 0.6,        // gentle horizontal drift
+          vy: (Math.random()-.5) * 0.28,       // gentle vertical drift
+          r: Math.random()*1.6 + 0.6,         // small radius
+          life: Math.random()*160 + 80,       // longer lifetime for subtle motion
+          a: Math.random()*0.6 + 0.18        // particle alpha multiplier (slightly stronger)
+        }));
+      }
 
-      function draw(){ ctx.clearRect(0,0,W,H); for(const p of particles){ p.x += p.vx; p.y += p.vy; p.life--; ctx.beginPath(); const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6); g.addColorStop(0, 'rgba(255,243,210,0.95)'); g.addColorStop(0.2, 'rgba(255,223,130,0.9)'); g.addColorStop(0.6, 'rgba(195,154,107,0.28)'); g.addColorStop(1, 'rgba(195,154,107,0)'); ctx.fillStyle = g; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); if(p.life<=0 || p.y< -20 || p.x< -20 || p.x>W+20){ Object.assign(p, { x: Math.random()*W, y: H + Math.random()*30, vx:(Math.random()-.5)*1.2, vy:(Math.random()*-.8)-.2, r: Math.random()*2 + 1, life: Math.random()*60 + 40 }); } }
+      function draw(){
+  // clear using CSS pixels (context is scaled to device pixels)
+  ctx.clearRect(0,0, W, H);
+        for(const p of particles){
+          // gentle sway for more natural motion
+          p.vx += Math.sin((p.x + p.y + performance.now()*0.0008) ) * 0.001;
+          p.vy += Math.cos((p.y - p.x + performance.now()*0.0009) ) * 0.0008;
+          p.x += p.vx; p.y += p.vy;
+          p.life--;
+
+          // keep inside bounds with soft bounce
+          if(p.x < 0) { p.x = 0; p.vx *= -0.6; }
+          if(p.x > W) { p.x = W; p.vx *= -0.6; }
+          if(p.y < 0) { p.y = 0; p.vy *= -0.6; }
+          if(p.y > H) { p.y = H; p.vy *= -0.6; }
+
+          // radial shimmer, much more transparent than before
+          ctx.beginPath();
+            const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r*5);
+            // slightly stronger stops so shimmer is visible but still soft
+            const alphaBoost = Math.min(1, p.a * 1.1); // +10% opacity, clamp to 1
+            g.addColorStop(0, `rgba(255,243,210,${(alphaBoost * 0.7).toFixed(3)})`);
+            g.addColorStop(0.25, `rgba(255,223,130,${(alphaBoost * 0.45).toFixed(3)})`);
+            g.addColorStop(0.6, `rgba(195,154,107,${(alphaBoost * 0.12).toFixed(3)})`);
+          g.addColorStop(1, 'rgba(195,154,107,0)');
+          ctx.fillStyle = g;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+
+          // respawn when life ends (anywhere in area) for distributed shimmer
+          if(p.life <= 0){
+            Object.assign(p, {
+              x: Math.random()*W,
+              y: Math.random()*H,
+              vx: (Math.random()-.5) * 0.6,
+              vy: (Math.random()-.5) * 0.28,
+              r: Math.random()*1.6 + 0.6,
+              life: Math.random()*160 + 80,
+              a: Math.random()*0.45 + 0.12
+            });
+          }
+        }
         rafId = requestAnimationFrame(draw);
       }
 
-      function start(){ if(rafId) return; resizeCanvas(); makeParticles(Math.max(18, Math.round((canvas.offsetWidth/300)*25))); draw(); window.addEventListener('resize', resizeCanvas); }
-      function stop(){ if(rafId) cancelAnimationFrame(rafId); rafId=null; window.removeEventListener('resize', resizeCanvas); ctx.clearRect(0,0,canvas.width, canvas.height); }
+      function start(){
+        if(rafId) return;
+        // ensure we have a measured size (menu open transitions may yield 0 initially)
+        resizeCanvas();
+        if(!W || !H){
+          // wait for layout and try again on next frame
+          requestAnimationFrame(()=> start());
+          return;
+        }
+        // particle count based on CSS width (higher min ensures visibility)
+        const count = Math.max(18, Math.round((W / 320) * 14));
+        makeParticles(count);
+        // draw after a tiny delay so any CSS transitions finish and sizes are stable
+        setTimeout(()=> draw(), 80);
+        window.addEventListener('resize', resizeCanvas);
+      }
+
+      function stop(){
+        if(rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        window.removeEventListener('resize', resizeCanvas);
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+      }
 
       // Observe the embedded menu for open state
       const embedded = document.getElementById('embeddedMenu');
