@@ -29,8 +29,8 @@
 html{ scrollbar-width:none; -ms-overflow-style:none; }
 body::-webkit-scrollbar{ display:none; width:0; height:0; }
 *, *::before, *::after { box-sizing: border-box; }
-html, body { height:100%; }
-body{ margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+html { height:100%; }
+body{ margin:0; min-height:100vh; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
   color:var(--text); background:var(--bg); line-height:1.6; letter-spacing:.2px; overflow-x:hidden; }
 img{max-width:100%; display:block;} a{color:inherit; text-decoration:none}
 .container{width:100%; max-width:var(--max); margin-inline:auto; padding:0 20px}
@@ -373,12 +373,23 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 
   <div class="nav">
     <div class="container nav-inner">
-      <a href="https://zanella.ro/index.html" class="brand" aria-label="Zanella Lounge">
+      <a href="/index.html" class="brand" aria-label="Zanella Lounge">
         <img src="assets/ZANELLA%20LOGO%20WHITE.png" alt="Zanella Lounge" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">
       </a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
+      <nav style="display:flex; gap:1rem; align-items:center;" aria-label="Primary">
+        <div class="nav-links" style="display:flex; gap:1rem; align-items:center">
+          <a href="#about">About</a>
+          <a href="#menuSection">Menu</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="nav-social" style="display:flex; gap:.6rem; align-items:center; margin-left:12px">
+          <a href="https://www.instagram.com/zanella_lounge/" aria-label="Instagram" target="_blank" rel="noopener" style="color:var(--muted); display:inline-flex; align-items:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.2a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm4.2-2.6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61580371774552" aria-label="Facebook" target="_blank" rel="noopener" style="color:var(--muted); display:inline-flex; align-items:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v7h4v-7h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
       </nav>
     </div>
   </div>
@@ -387,14 +398,16 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
     <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content container">
-      <div class="chip chip--green" style="margin-bottom:10px">Modern Eco-Brutalism Interior</div>
-      <h1 id="heroHeadline">Dine. Drink. <span class="accent">Gather.</span></h1>
-      <p id="heroSub">Grey concrete, warm wood, and fresh greenery—an elegant setting for social nights.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-gold" href="#contact">Contact</a>
+      <!-- Simplified hero: logo + primary nav CTAs -->
+      <img src="assets/Zanella Lounge Logo White.png" alt="Zanella Lounge" class="hero-logo" style="max-width:640px; height:auto; display:block; margin:0 auto 18px;" />
+      <div class="hero-ctas" style="justify-content:center">
         <a class="btn btn-ghost" href="#about">About</a>
-        <a class="btn btn-gold" href="#menuSection">Menu</a>
+        <a class="btn btn-ghost" href="#menuSection">Menu</a>
+        <a class="btn btn-ghost" href="#contact">Contact</a>
       </div>
+      <!-- keep headline/sub for JS hooks but visually hidden -->
+      <h1 id="heroHeadline" style="display:none">ZANELLA Lounge</h1>
+      <p id="heroSub" style="display:none"></p>
     </div>
   </section>
 
@@ -710,11 +723,34 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       const btn = document.getElementById('menuToggleBtn');
       const panel = document.getElementById('embeddedMenu');
       if(!btn || !panel) return;
-  function openMenu(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus();
-    // apply randomized looks when opening
-    try{ window.randomizePricingLooks && window.randomizePricingLooks(); }catch(e){}
+
+  // ensure panel is removed from flow when initially closed
+  if(!panel.classList.contains('open')) panel.style.display = 'none';
+
+  function openMenu(){
+    // ensure element participates in layout before animating
+    panel.style.display = 'block';
+    // next frame, add class to trigger transition
+    requestAnimationFrame(()=>{
+      panel.classList.add('open');
+      panel.setAttribute('aria-hidden','false');
+      btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true');
+      panel.querySelectorAll('a,button')[0]?.focus();
+      // apply randomized looks when opening
+      try{ window.randomizePricingLooks && window.randomizePricingLooks(); }catch(e){}
+    });
   }
-  function closeMenu(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+
+  function closeMenu(){
+    // remove open class to animate closed state
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden','true');
+    btn.textContent='Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus();
+    // after transition ends, remove from flow to avoid blocking scroll
+    const onTransEnd = (ev)=>{ if(ev.target!==panel) return; panel.style.display = 'none'; panel.removeEventListener('transitionend', onTransEnd); };
+    panel.addEventListener('transitionend', onTransEnd);
+  }
+
   // expose for programmatic control
   window.openEmbeddedMenu = openMenu;
   window.closeEmbeddedMenu = closeMenu;
@@ -750,6 +786,8 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
       function createCanvas(row){
+        // respect reduced motion preference
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         // remove existing canvas
         const existing = row.querySelector('.row-canvas');
         if(existing) existing.remove();
@@ -768,17 +806,30 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
           ctx.setTransform(ratio,0,0,ratio,0,0);
         }
         resize();
-        const particles = Array.from({length:6}, ()=>({ x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.6, vy:(Math.random()-.5)*.3, r: Math.random()*2 + .6, life: Math.random()*80 + 40 }));
-        let rafId=null;
+
+        // if user prefers reduced motion, return no-op animation controls
+        if(reduced){
+          return { resize, start: ()=>{}, stop: ()=>{ const ex = c; try{ ctx.clearRect(0,0,c.width,c.height); }catch(e){} } };
+        }
+
+        // lighter particle set: fewer, smaller, subtler alpha
+        const particles = Array.from({length:3}, ()=>({ x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.36, vy:(Math.random()-.5)*.18, r: Math.random()*1.2 + .4, life: Math.random()*100 + 60, a: Math.random()*0.45 + 0.08 }));
+        let rafId=null; let frame=0;
         function draw(color){
-          ctx.clearRect(0,0,c.width,c.height);
+          frame++;
+          // update positions every frame but draw only every 2 frames to reduce work
           for(const p of particles){
             p.x += p.vx; p.y += p.vy; p.life--;
             if(p.x<0||p.x>c.width) p.vx *= -1;
             if(p.y<0||p.y>c.height) p.vy *= -1;
+            if(p.life<=0){ Object.assign(p, { x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.36, vy:(Math.random()-.5)*.18, r: Math.random()*1.2 + .4, life: Math.random()*100 + 60, a: Math.random()*0.45 + 0.08 }); }
+          }
+          if(frame % 2 !== 0){ rafId = requestAnimationFrame(()=> draw(color)); return; }
+
+          ctx.clearRect(0,0,c.width,c.height);
+          for(const p of particles){
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-            ctx.fillStyle = color; ctx.globalAlpha = 0.65; ctx.fill(); ctx.globalAlpha = 1;
-            if(p.life<=0){ Object.assign(p, { x: Math.random()*c.width, y: Math.random()*c.height, vx:(Math.random()-.5)*.6, vy:(Math.random()-.5)*.3, r: Math.random()*2 + .6, life: Math.random()*80 + 40 }); }
+            ctx.fillStyle = color; ctx.globalAlpha = Math.min(0.55, p.a); ctx.fill(); ctx.globalAlpha = 1;
           }
           rafId = requestAnimationFrame(()=> draw(color));
         }
