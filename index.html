@@ -81,9 +81,12 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 .nav a{ color:var(--muted); font-size:.95rem } .nav a:hover{ color:var(--text) }
 .nav-links{ display:flex; gap:1rem }
 
-/* HERO */
-/* use JS-driven --vh to avoid mobile address-bar resize jitter */
-.hero{ position:relative; min-height: calc(var(--vh, 1vh) * 82); display:grid; place-items:center; overflow:hidden; }
+.hero{
+  position:relative;
+  /* make hero fill the viewport minus the sticky nav (64px) so overlay covers full screen on load */
+  min-height: calc( (var(--vh, 1vh) * 100) - 64px );
+  display:grid; place-items:center; overflow:hidden;
+}
 .hero-media{
   position:absolute; inset:0; pointer-events:none;
   /* Force GPU compositing to avoid scroll jitter on mobile */
@@ -119,6 +122,12 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 .hero h1 .accent{ color: var(--accent-3); text-shadow: 0 0 18px rgba(95,179,140,.25); }
 .hero p{ color:var(--muted); margin:.5rem auto 1.2rem; max-width:36rem }
 .hero-ctas{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap }
+
+/* Scroll indicator under hero CTAs: subtle pulsing down arrow */
+.scroll-indicator{ display:inline-flex; align-items:center; justify-content:center; margin: 128px auto 0; width:44px; height:44px; border-radius:999px; background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer; animation: scroll-pulse 1.6s ease-in-out infinite; }
+.scroll-indicator svg{ width:32px; height:32px; display:block }
+@keyframes scroll-pulse{ 0%{ transform: translateY(0); opacity:.8 } 50%{ transform: translateY(8px); opacity:.4 } 100%{ transform: translateY(0); opacity:.8 } }
+@media (prefers-reduced-motion: reduce){ .scroll-indicator{ animation:none } }
 
 /* Tickets */
 .tickets{ position:relative } .tickets .card{ overflow:hidden }
@@ -399,12 +408,15 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content container">
       <!-- Simplified hero: logo + primary nav CTAs -->
-      <img src="assets/Zanella Lounge Logo White.png" alt="Zanella Lounge" class="hero-logo" style="max-width:640px; height:auto; display:block; margin:0 auto 18px;" />
+      <img src="assets/Zanella Lounge Logo White.png" alt="Zanella Lounge" class="hero-logo" style="width: 640px; max-width: 80%; height:auto; display:block; margin:0 auto 18px;" />
       <div class="hero-ctas" style="justify-content:center">
         <a class="btn btn-ghost" href="#about">About</a>
         <a class="btn btn-ghost" href="#menuSection">Menu</a>
         <a class="btn btn-ghost" href="#contact">Contact</a>
       </div>
+      <a href="#about" class="scroll-indicator" aria-label="Scroll to About">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 12l-7 7-7-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
       <!-- keep headline/sub for JS hooks but visually hidden -->
       <h1 id="heroHeadline" style="display:none">ZANELLA Lounge</h1>
       <p id="heroSub" style="display:none"></p>
@@ -416,7 +428,14 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       <div class="grid grid-2">
         <div class="reveal">
           <h2>About Us</h2>
-          <p>ZANELLA Lounge is a quiet-luxury social space in Cluj-Napoca, designed for those who value connection over chaos. With a warm industrial aesthetic of concrete, wood, plants, and curated light, every detail is intentional — from hosted service to signature cocktails built on local botanicals. Limited Social Suites ensure your night feels exclusive, effortless, and unforgettable.</p>
+          <p>ZANELLA Lounge is an elevated social space in Cluj-Napoca. <br>
+            High Quality Food & Drinks.<br>
+            Curated Music & Ambiance.<br>
+            Weekly Themed Events.<br>
+            Great Service.<br>
+            Dress Code: Smart Casual. <br>
+            (No sportswear, or overly casual attire)</p>
+          </p>
           <div class="features">
             <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M4 12c0-4 3-7 8-7s8 3 8 7M4 12c0 4 3 7 8 7s8-3 8-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Elevated Comfort Food</span>
             <span class="chip chip--green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 20l6-16 6 16M9.5 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Craft Cocktails</span>
@@ -644,6 +663,16 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       { title: "Smart Casual & Professional Setting", sub: "Refined space. Smart-casual nights. Your table, your people.", image: "assets/zanella_image_3.jpg" }
     ];
     const TICKET_URL = "https://your-ticketing-url.example.com";
+
+    // Set --vh CSS variable for mobile browser viewport handling
+    (function setVh(){
+      function update(){
+        try{ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }catch(e){}
+      }
+      update();
+      window.addEventListener('resize', update);
+      window.addEventListener('orientationchange', update);
+    })();
 
     // Elements
     const heroMedia = document.getElementById('heroMedia');
