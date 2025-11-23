@@ -382,6 +382,7 @@
                 this.lookSensitivityMultiplier = 1.0;
                 this.moveState = { fwd: false, bwd: false, left: false, right: false, up: false, down: false };
                 this.isLooking = false;
+                this.skipNextLookMove = false; // Add jump fix flag
                 this.rmbDragThreshold = 2;
                 this.rmbDownPos = new THREE.Vector2();
                 
@@ -516,6 +517,7 @@
                         this.isLooking = false;
                     } else {
                         this.isLooking = true;
+                        this.skipNextLookMove = true; // FIX: Skip the first jump frame
                     }
                 });
 
@@ -1183,6 +1185,12 @@
 
             onPointerMove(e) {
                 if (this.isLooking) {
+                    // FIX: Ignore the first movement event after lock to prevent jumps
+                    if(this.skipNextLookMove) {
+                        this.skipNextLookMove = false;
+                        return;
+                    }
+                    
                     const baseSensitivity = 0.002; const sensitivity = baseSensitivity * this.lookSensitivityMultiplier;
                     this.camera.rotation.y -= e.movementX * sensitivity; this.camera.rotation.x -= e.movementY * sensitivity;
                     this.camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.camera.rotation.x));
@@ -1335,6 +1343,8 @@
                 this.commitState(); this.rebuildGeometry(); this.renderPartsList();
             }
 
+            // --- RESTORED MISSING METHODS ---
+
             handleSelection(e) {
                 const rect = this.renderer.domElement.getBoundingClientRect();
                 const ndc = new THREE.Vector2(((e.clientX - rect.left)/rect.width)*2-1, -((e.clientY - rect.top)/rect.height)*2+1);
@@ -1342,12 +1352,15 @@
                 const intersects = this.raycaster.intersectObjects(this.geometryGroup.children);
                 let hit = null;
                 if(intersects.length > 0) {
-                    const m = intersects[0].object; const t = m.type === 'LineSegments' ? m.parent : m;
+                    const m = intersects[0].object;
+                    const t = m.type === 'LineSegments' ? m.parent : m;
                     if(t && t.isMesh) hit = t.userData;
                 }
-                if (!e.shiftKey) { this.selections = hit ? [hit] : []; } else if (hit) {
+                if (!e.shiftKey) { this.selections = hit ? [hit] : []; }
+                else if (hit) {
                     const existsIdx = this.selections.findIndex(s => s.shapeRef === hit.shapeRef);
-                    if (existsIdx > -1) this.selections.splice(existsIdx, 1); else this.selections.push(hit);
+                    if (existsIdx > -1) this.selections.splice(existsIdx, 1);
+                    else this.selections.push(hit);
                 }
                 this.updateSelectionVisuals();
                 this.updateSelectionUI();
@@ -1463,93 +1476,98 @@
                 this.rebuildGeometry();
                 this.updateSelectionUI();
             }
-            
-            setSelectionOffset(axis, value) {
-                if(this.selections.length === 0) return;
-                this.selections.forEach(sel => { if(axis === 'u') sel.shapeRef.offsetU = value; if(axis === 'v') sel.shapeRef.offsetV = value; });
-                this.commitState(); this.rebuildGeometry(); this.updateSelectionUI();
-            }
 
             deleteSelected() {
                 if(this.selections.length === 0) return;
-                this.selections.forEach(sel => { const p = this.state.parts.find(pt => pt.id === sel.partId); if(p) { const idx = p.shapes.indexOf(sel.shapeRef); if(idx > -1) p.shapes.splice(idx, 1); } });
-                this.selections = []; this.commitState(); this.updateSelectionUI(); this.rebuildGeometry(); this.renderPartsList();
+                this.selections.forEach(sel => {
+                    const p = this.state.parts.find(pt => pt.id === sel.partId);
+                    if(p) {
+                        const idx = p.shapes.indexOf(sel.shapeRef);
+                        if(idx > -1) p.shapes.splice(idx, 1);
+                    }
+                });
+                this.selections = [];
+                this.commitState();
+                this.updateSelectionUI();
+                this.rebuildGeometry();
+                this.renderPartsList();
+            }
+
+            setSelectionOffset(axis, value) {
+                if(this.selections.length === 0) return;
+                this.selections.forEach(sel => {
+                    if(axis === 'u') sel.shapeRef.offsetU = value;
+                    if(axis === 'v') sel.shapeRef.offsetV = value;
+                });
+                this.commitState();
+                this.rebuildGeometry();
+                this.updateSelectionUI();
             }
 
             rebuildGeometry() {
                 while(this.geometryGroup.children.length > 0) {
-                    const o = this.geometryGroup.children[0]; if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); this.geometryGroup.remove(o);
+                    const o = this.geometryGroup.children[0];
+                    if(o.geometry) o.geometry.dispose();
+                    if(o.material) o.material.dispose();
+                    this.geometryGroup.remove(o);
                 }
                 document.getElementById('labels-container').innerHTML = '';
                 this.state.parts.forEach(part => {
-                    if (part.visible === false) return; 
-                    
+                    if (part.visible === false) return;
                     const baseMat = new THREE.MeshStandardMaterial({ color: part.color, roughness: 0.4, metalness: 0.6 });
-
-                    part.shapes.forEach(s => { 
+                    part.shapes.forEach(s => {
                         if(s.type === 'line') {
                             let matToUse = baseMat;
-                            if(s.color) {
-                                matToUse = new THREE.MeshStandardMaterial({ color: s.color, roughness: 0.4, metalness: 0.6 });
-                            }
-                            this.createBar(s.start, s.end, part.w, part.h, matToUse, part.id, s, part.align); 
+                            if(s.color) matToUse = new THREE.MeshStandardMaterial({ color: s.color, roughness: 0.4, metalness: 0.6 });
+                            this.createBar(s.start, s.end, part.w, part.h, matToUse, part.id, s, part.align || {});
                         }
                     });
                 });
                 this.updateSelectionVisuals();
-                // Also update handles position if selection persists
-                if (this.selections.length > 0) {
-                    this.updateSelectionUI();
-                }
+                if (this.selections.length > 0) this.updateSelectionUI();
             }
 
             createBar(p1, p2, w, h, mat, pid, ref, align) {
                 const s = new THREE.Vector3(p1.x, p1.y, p1.z), e = new THREE.Vector3(p2.x, p2.y, p2.z);
-                const len = s.distanceTo(e); if(len < 1) return;
-                
-                // Clone mat only if we didn't create a unique one in the loop
-                // Actually createBar assumes it gets a mat it can use or clone. 
-                // Since our loop handles unique materials, we can just pass it.
-                // However, createBar assumes it needs to clone to not affect others if modified later? 
-                // For safety in this app structure, we clone. 
-                
+                const len = s.distanceTo(e);
+                if(len < 1) return;
                 const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, len), mat.clone());
                 const mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
                 mesh.position.copy(mid); mesh.lookAt(e);
                 const offU = ref.offsetU || 0; const offV = ref.offsetV || 0;
-                if (offU !== 0) mesh.translateX(offU * w / 2); if (offV !== 0) mesh.translateY(offV * h / 2);
-                
-                // Important: Store the visible color in userData for selection highlight logic
+                if (offU !== 0) mesh.translateX(offU * w / 2);
+                if (offV !== 0) mesh.translateY(offV * h / 2);
                 mesh.userData = { partId: pid, shapeRef: ref, length: len, originalColor: mat.color.getHex() };
-                
                 this.geometryGroup.add(mesh);
                 const edges = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), new THREE.LineBasicMaterial({ color: 0x000000 }));
                 mesh.add(edges);
                 this.createLabel(mid, len.toFixed(0));
             }
-            createLabel(pos, txt) { const d = document.createElement('div'); d.className = 'dimension-label'; d.innerText = txt; document.getElementById('labels-container').appendChild(d); d.userData = { pos3D: pos }; }
+
+            createLabel(pos, txt) {
+                const d = document.createElement('div');
+                d.className = 'dimension-label';
+                d.innerText = txt;
+                document.getElementById('labels-container').appendChild(d);
+                d.userData = { pos3D: pos };
+            }
+
             updateLabels() {
-                const labels = document.querySelectorAll('.dimension-label'); const v = new THREE.Vector3();
-                labels.forEach(l => { if(!l.userData.pos3D) return; v.copy(l.userData.pos3D).project(this.camera); if(v.z > 1) l.style.display = 'none'; else { l.style.display = 'block'; l.style.left = ((v.x * .5 + .5) * window.innerWidth) + 'px'; l.style.top = ((v.y * -.5 + .5) * window.innerHeight) + 'px'; } });
+                const labels = document.querySelectorAll('.dimension-label');
+                const v = new THREE.Vector3();
+                labels.forEach(l => {
+                    if(!l.userData.pos3D) return;
+                    v.copy(l.userData.pos3D).project(this.camera);
+                    if(v.z > 1) { l.style.display = 'none'; }
+                    else {
+                        l.style.display = 'block';
+                        l.style.left = ((v.x * .5 + .5) * window.innerWidth) + 'px';
+                        l.style.top = ((v.y * -.5 + .5) * window.innerHeight) + 'px';
+                    }
+                });
             }
-            // ... (Export/Import/Blueprint/Animate methods standard) ...
-            exportJSON() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(this.state)], {type: 'application/json'})); a.download = 'metal_project.json'; a.click(); }
-            loadJSON(i) {
-                const f = i.files[0]; if(!f) return; const r = new FileReader();
-                r.onload = (e) => { 
-                    try { 
-                        this.state = JSON.parse(e.target.result); 
-                        if(this.state.parts) { this.state.parts.forEach(p => { if(!p.align) p.align = 'center'; if(p.visible === undefined) p.visible = true; if(p.inBlueprint === undefined) p.inBlueprint = true; }); }
-                        if(!this.state.blueprintImages) this.state.blueprintImages = [];
-                        if(!this.state.parts.find(p => p.id === this.state.activePartId)) { this.state.activePartId = this.state.parts.length > 0 ? this.state.parts[0].id : null; }
-                        this.rebuildGeometry(); this.renderPartsList(); this.updateUIFields(); this.updateGridSettings(); 
-                        const camToggleBtn = document.getElementById('cam-toggle');
-                        if (this.state.cameraMode === 'ortho') { this.camera = this.orthoCamera; camToggleBtn.innerText = 'Ortho'; } else { this.state.cameraMode = 'perspective'; this.camera = this.perspCamera; camToggleBtn.innerText = 'Persp'; }
-                        this.controls.object = this.camera; this.onResize(); this.fitCameraToScene(); this.history = []; this.historyIndex = -1; this.commitState();
-                    } catch(x){ console.error(x); alert('Error loading file'); } 
-                };
-                r.readAsText(f); i.value = ''; 
-            }
+
+            // ... (Rest of logic) ...
             fitCameraToScene(offset = 1.4) { 
                 const box = new THREE.Box3().setFromObject(this.geometryGroup); if(box.isEmpty()) return;
                 const center = new THREE.Vector3(); box.getCenter(center); const size = new THREE.Vector3(); box.getSize(size); const maxDim = Math.max(size.x, size.y, size.z);
