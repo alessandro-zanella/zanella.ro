@@ -666,6 +666,80 @@
                     
                 } catch(e) { console.error("Load AutoSave Failed:", e); }
             }
+
+            exportJSON() {
+                const data = {
+                    version: 2,
+                    timestamp: Date.now(),
+                    state: this.state,
+                    settings: {
+                        flySpeed: this.flySpeed,
+                        sensitivity: this.lookSensitivityMultiplier,
+                        gridSize: this.state.gridSize,
+                        drawingY: this.state.drawingY
+                    },
+                    camera: {
+                        position: this.camera.position.toArray(),
+                        rotation: this.camera.rotation.toArray().slice(0, 3),
+                        target: this.controls.target.toArray(),
+                        mode: this.state.cameraMode
+                    }
+                };
+                const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+                saveAs(blob, "frame_cad_project.json");
+            }
+
+            loadJSON(input) {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.state) {
+                            this.state = data.state;
+                            // Restore settings if available
+                            if(data.settings) {
+                                this.flySpeed = data.settings.flySpeed || 10;
+                                this.lookSensitivityMultiplier = data.settings.sensitivity || 1.0;
+                            }
+                            // Restore Camera if available
+                             if(data.camera) {
+                                this.state.cameraMode = data.camera.mode || 'perspective';
+                                if(this.state.cameraMode === 'ortho') {
+                                     this.camera = this.orthoCamera;
+                                     document.getElementById('cam-toggle').innerText = 'Ortho';
+                                     document.getElementById('nav-hint').innerText = "WASD(Zoom)+QE";
+                                } else {
+                                     this.camera = this.perspCamera;
+                                     document.getElementById('cam-toggle').innerText = 'Persp';
+                                     document.getElementById('nav-hint').innerText = "WASD+QE";
+                                }
+                                this.camera.position.fromArray(data.camera.position);
+                                if(data.camera.target) this.controls.target.fromArray(data.camera.target);
+                                this.camera.lookAt(this.controls.target);
+                                this.controls.object = this.camera;
+                            }
+                            
+                            this.history = [];
+                            this.historyIndex = -1;
+                            this.commitState(); // Save loaded state as first history item
+                            
+                            this.rebuildGeometry();
+                            this.renderPartsList();
+                            this.updateUIFields();
+                            this.updateGridSettings();
+                            
+                            // Reset input
+                            input.value = '';
+                        }
+                    } catch (err) {
+                        console.error("Failed to load JSON", err);
+                        alert("Invalid Project File");
+                    }
+                };
+                reader.readAsText(file);
+            }
             
             async downloadAllImages() {
                 if(!this.state.blueprintImages || this.state.blueprintImages.length === 0) {
