@@ -144,6 +144,8 @@
         </div>
         <div class="flex gap-3 items-center">
             <div class="text-[10px] text-gray-400 flex items-center gap-2 mr-2 bg-black/20 px-2 py-1 rounded border border-white/5">
+                <button class="text-blue-400 font-bold hover:text-white transition-colors" onclick="app.toggleDimensions()" id="dim-toggle-btn" title="Toggle Dimension Visibility">DIMS: ON</button>
+                <span class="w-px h-3 bg-gray-600"></span>
                 <span class="font-bold text-blue-400">FLY:</span> <span id="nav-hint">WASD+QE</span>
                 <span class="w-px h-3 bg-gray-600"></span>
                 <span class="font-bold text-blue-400">LOOK:</span> <span id="look-hint">RMB</span>
@@ -177,6 +179,7 @@
                 <div class="flex gap-2">
                     <span>Count</span>
                     <span title="Hide in View">Vis</span>
+                    <span>Del</span>
                 </div>
             </div>
             <div id="parts-list" class="flex flex-col gap-1 mb-3 max-h-40 overflow-y-auto border border-white/10 rounded-lg bg-black/20 p-1"></div>
@@ -374,7 +377,8 @@
                     snapToParts: true,
                     drawingY: 0,
                     cameraMode: 'perspective',
-                    blueprintImages: [] // {id, name, dataUrl}
+                    blueprintImages: [], // {id, name, dataUrl}
+                    showDimensions: true // NEW: Toggle state for dimensions
                 };
 
                 // Fly / Navigation State
@@ -443,7 +447,8 @@
                 this.perspCamera.position.set(800, 600, 800);
                 this.perspCamera.rotation.order = 'YXZ'; 
 
-                this.orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 100000);
+                // FIX: Increased negative near plane to prevent clipping
+                this.orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -50000, 100000);
                 this.orthoCamera.position.set(800, 600, 800);
                 
                 this.camera = this.perspCamera;
@@ -603,7 +608,8 @@
                             // NEW: Persist Grid & Plane
                             gridSize: this.state.gridSize,
                             drawingY: this.state.drawingY,
-                            planeStep: parseFloat(document.getElementById('plane-step-input').value) || 50
+                            planeStep: parseFloat(document.getElementById('plane-step-input').value) || 50,
+                            showDimensions: this.state.showDimensions // Save Dimensions State
                         },
                         camera: {
                             position: this.camera.position.toArray(),
@@ -638,6 +644,7 @@
                         // Note: Step input will be updated in initUI if we store it on instance, 
                         // but since it's just a UI value, we can set it there.
                         this.savedPlaneStep = data.settings.planeStep || 50;
+                        if(data.settings.showDimensions !== undefined) this.state.showDimensions = data.settings.showDimensions;
                     }
 
                     if(data.camera) {
@@ -676,7 +683,8 @@
                         flySpeed: this.flySpeed,
                         sensitivity: this.lookSensitivityMultiplier,
                         gridSize: this.state.gridSize,
-                        drawingY: this.state.drawingY
+                        drawingY: this.state.drawingY,
+                        showDimensions: this.state.showDimensions
                     },
                     camera: {
                         position: this.camera.position.toArray(),
@@ -702,6 +710,7 @@
                             if(data.settings) {
                                 this.flySpeed = data.settings.flySpeed || 10;
                                 this.lookSensitivityMultiplier = data.settings.sensitivity || 1.0;
+                                if(data.settings.showDimensions !== undefined) this.state.showDimensions = data.settings.showDimensions;
                             }
                             // Restore Camera if available
                              if(data.camera) {
@@ -913,6 +922,7 @@
                 this.state = JSON.parse(json);
                 if(this.state.snapToParts === undefined) this.state.snapToParts = true;
                 if(!this.state.blueprintImages) this.state.blueprintImages = [];
+                if(this.state.showDimensions === undefined) this.state.showDimensions = true;
                 this.selections = []; 
                 this.updateSelectionUI();
                 this.rebuildGeometry();
@@ -920,6 +930,9 @@
                 this.updateUIFields();
                 this.updateGridSettings();
                 document.getElementById('snap-parts-check').checked = this.state.snapToParts;
+                // Update dim button state
+                const dimBtn = document.getElementById('dim-toggle-btn');
+                if(dimBtn) dimBtn.innerText = this.state.showDimensions ? "DIMS: ON" : "DIMS: OFF";
             }
 
             updateGridVisuals() {
@@ -1008,15 +1021,50 @@
                 
                 document.getElementById('speed-val').innerText = this.flySpeed.toFixed(1); 
                 document.getElementById('sens-input').value = this.lookSensitivityMultiplier; 
+                document.getElementById('dim-toggle-btn').innerText = this.state.showDimensions ? "DIMS: ON" : "DIMS: OFF";
             }
             addPart() {
                 const id = 'p' + Date.now(); this.state.parts.push({ id, name: 'Part ' + (this.state.parts.length + 1), color: '#ffffff', w: 20, h: 20, visible: true, inBlueprint: true, shapes: [] });
                 this.commitState(); this.setActivePart(id);
             }
+            deletePart(id) {
+                // Confirm delete? For now direct delete
+                const idx = this.state.parts.findIndex(p => p.id === id);
+                if(idx > -1) {
+                    this.state.parts.splice(idx, 1);
+                    
+                    // If we deleted the active part, switch to another
+                    if(this.state.activePartId === id) {
+                        if(this.state.parts.length > 0) {
+                            this.setActivePart(this.state.parts[0].id);
+                        } else {
+                            // No parts left, add a default one
+                            this.addPart();
+                        }
+                    } else {
+                        // Just re-render list
+                        this.renderPartsList();
+                    }
+                    
+                    // Clear selections if they belonged to deleted part
+                    this.selections = this.selections.filter(s => s.partId !== id);
+                    this.updateSelectionUI();
+                    this.rebuildGeometry();
+                    this.commitState();
+                }
+            }
             setActivePart(id) { if (this.state.activePartId === id) return; this.state.activePartId = id; this.renderPartsList(); this.updateUIFields(); }
             getActivePart() { return this.state.parts.find(p => p.id === this.state.activePartId); }
             toggleVisibility(id) { const part = this.state.parts.find(p => p.id === id); if(!part) return; part.visible = !part.visible; this.commitState(); this.renderPartsList(); this.rebuildGeometry(); }
             toggleBlueprintInclude(id) { const part = this.state.parts.find(p => p.id === id); if(!part) return; part.inBlueprint = !part.inBlueprint; this.commitState(); }
+            
+            toggleDimensions() {
+                this.state.showDimensions = !this.state.showDimensions;
+                document.getElementById('dim-toggle-btn').innerText = this.state.showDimensions ? "DIMS: ON" : "DIMS: OFF";
+                this.updateLabels();
+                this.commitState();
+            }
+
             handlePartClick(e, id) {
                 if(e.shiftKey) {
                     const part = this.state.parts.find(p => p.id === id);
@@ -1035,7 +1083,7 @@
                     const isActive = p.id === this.state.activePartId; const isVisible = p.visible !== false;
                     const div = document.createElement('div'); div.className = `p-2 rounded cursor-pointer flex justify-between items-center transition-colors ${isActive ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-white/10 text-gray-300'}`;
                     div.onclick = (e) => this.handlePartClick(e, p.id);
-                    div.innerHTML = `<div class="flex items-center gap-2 overflow-hidden flex-1"><input type="checkbox" class="bp-checkbox" ${p.inBlueprint !== false ? 'checked' : ''} onclick="event.stopPropagation(); app.toggleBlueprintInclude('${p.id}')" title="Include in Blueprint"><div class="w-3 h-3 shrink-0 rounded-full border border-black/30 shadow-sm" style="background-color: ${p.color}"></div><span class="text-xs font-bold truncate select-none flex-1" title="${p.name}">${p.name}</span></div><div class="flex items-center gap-2 pl-2"><span class="text-[9px] opacity-70 font-mono bg-black/20 px-1 rounded">${p.shapes.length}</span><div class="vis-icon ${!isVisible ? 'hidden-part' : ''}" onclick="event.stopPropagation(); app.toggleVisibility('${p.id}')" title="Toggle Visibility">${isVisible ? '👁️' : '🚫'}</div></div>`;
+                    div.innerHTML = `<div class="flex items-center gap-2 overflow-hidden flex-1"><input type="checkbox" class="bp-checkbox" ${p.inBlueprint !== false ? 'checked' : ''} onclick="event.stopPropagation(); app.toggleBlueprintInclude('${p.id}')" title="Include in Blueprint"><div class="w-3 h-3 shrink-0 rounded-full border border-black/30 shadow-sm" style="background-color: ${p.color}"></div><span class="text-xs font-bold truncate select-none flex-1" title="${p.name}">${p.name}</span></div><div class="flex items-center gap-2 pl-2"><span class="text-[9px] opacity-70 font-mono bg-black/20 px-1 rounded">${p.shapes.length}</span><div class="vis-icon ${!isVisible ? 'hidden-part' : ''}" onclick="event.stopPropagation(); app.toggleVisibility('${p.id}')" title="Toggle Visibility">${isVisible ? '👁️' : '🚫'}</div><div class="vis-icon text-red-500 hover:text-red-400 ml-2" onclick="event.stopPropagation(); app.deletePart('${p.id}')" title="Delete Part">✕</div></div>`;
                     container.appendChild(div);
                 });
             }
@@ -1619,15 +1667,22 @@
             }
 
             createLabel(pos, txt) {
+                // REMOVED: if(!this.state.showDimensions) return; 
                 const d = document.createElement('div');
                 d.className = 'dimension-label';
                 d.innerText = txt;
+                // NEW: Set initial visibility
+                d.style.display = this.state.showDimensions ? 'block' : 'none'; 
                 document.getElementById('labels-container').appendChild(d);
                 d.userData = { pos3D: pos };
             }
 
             updateLabels() {
                 const labels = document.querySelectorAll('.dimension-label');
+                if(!this.state.showDimensions) {
+                    labels.forEach(l => l.style.display = 'none');
+                    return;
+                }
                 const v = new THREE.Vector3();
                 labels.forEach(l => {
                     if(!l.userData.pos3D) return;
