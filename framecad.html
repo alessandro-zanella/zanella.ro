@@ -187,7 +187,7 @@
     </div>
 
     <!-- Left Sidebar -->
-    <div class="ui-panel resize-handle absolute top-16 left-3 w-72 min-w-[260px] max-w-[50vw] p-4 rounded-xl flex flex-col gap-5 z-20 max-h-[85vh] no-print shadow-2xl">
+    <div class="ui-panel resize-handle absolute top-16 left-3 w-72 min-w-[260px] max-w-[50vw] p-4 rounded-xl flex flex-col gap-5 z-20 max-h-[85vh] no-print shadow-2xl overflow-y-auto">
         <!-- Parts Manager -->
         <div>
             <div class="flex justify-between items-center mb-2">
@@ -261,6 +261,13 @@
                 </div>
                 <p class="mt-1 italic text-blue-300 text-[10px] leading-tight" id="tool-hint">Select tool to interact.</p>
             </div>
+        </div>
+
+        <!-- NEW: Project Notes Panel -->
+        <hr class="border-white/10">
+        <div>
+            <h3 class="text-xs uppercase text-gray-400 font-bold mb-2 tracking-wider">Project Notes</h3>
+            <textarea id="project-notes-input" class="w-full h-24 bg-black/20 border border-white/10 rounded p-2 text-[10px] text-gray-300 focus:outline-none focus:border-blue-500 resize-none" placeholder="Add construction notes here..." oninput="app.setProjectNotes(this.value)"></textarea>
         </div>
 
         <!-- Axis Control -->
@@ -372,6 +379,12 @@
                 <!-- Dynamic Images go here -->
             </div>
 
+            <!-- NEW: PROJECT NOTES (In Blueprint) -->
+            <div id="bp-notes-container" class="mb-8 avoid-break hidden">
+                <h2 class="text-2xl font-black border-b-2 border-black mb-4 uppercase tracking-tight">Project Notes</h2>
+                <div id="bp-notes-content" class="text-sm font-mono whitespace-pre-wrap bg-gray-50 p-4 border border-gray-200"></div>
+            </div>
+
             <!-- PROFILE LEGEND TABLE -->
              <div class="mb-8 avoid-break">
                 <h2 class="text-2xl font-black border-b-2 border-black mb-4 uppercase tracking-tight">Profile Legend</h2>
@@ -431,8 +444,9 @@
                     cameraMode: 'perspective',
                     blueprintImages: [], // {id, name, dataUrl}
                     showDimensions: true,
-                    showProfileLabels: false, // NEW
-                    projectName: 'Untitled Project' 
+                    showProfileLabels: false,
+                    projectName: 'Untitled Project',
+                    projectNotes: '' // NEW: Store notes
                 };
                 
                 // Purchase Optimization Settings (not strict state, but persistent)
@@ -658,6 +672,11 @@
                 this.saveToLocalStorage();
             }
 
+            setProjectNotes(val) {
+                this.state.projectNotes = val;
+                this.saveToLocalStorage();
+            }
+
             // --- LOCAL STORAGE & SAVING ---
             saveToLocalStorage() {
                 try {
@@ -711,6 +730,7 @@
                     
                     // Default name if missing
                     if(!this.state.projectName) this.state.projectName = 'Untitled Project';
+                    if(this.state.projectNotes === undefined) this.state.projectNotes = ''; // Default if missing
 
                     if(data.camera) {
                         this.state.cameraMode = data.camera.mode || 'perspective';
@@ -782,6 +802,7 @@
                                 if(data.settings.stockLengths) this.stockLengths = data.settings.stockLengths;
                             }
                             if(!this.state.projectName) this.state.projectName = 'Untitled Project';
+                            if(this.state.projectNotes === undefined) this.state.projectNotes = '';
 
                             // Restore Camera if available
                              if(data.camera) {
@@ -876,7 +897,7 @@
             // ... (Input/UI init methods skipped for brevity, assumed standard from v4) ...
             initInputs() {
                  window.addEventListener('keydown', (e) => {
-                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
                     const key = e.key.toLowerCase();
                     const ctrl = e.ctrlKey || e.metaKey;
 
@@ -1010,6 +1031,7 @@
                 if(this.state.showDimensions === undefined) this.state.showDimensions = true;
                 if(this.state.showProfileLabels === undefined) this.state.showProfileLabels = false;
                 if(!this.state.projectName) this.state.projectName = 'Untitled Project';
+                if(this.state.projectNotes === undefined) this.state.projectNotes = '';
 
                 this.selections = []; 
                 this.updateSelectionUI();
@@ -1025,6 +1047,7 @@
                 if(profBtn) profBtn.innerText = this.state.showProfileLabels ? "TYPE: ON" : "TYPE: OFF";
 
                 document.getElementById('project-name-input').value = this.state.projectName;
+                document.getElementById('project-notes-input').value = this.state.projectNotes;
             }
 
             updateGridVisuals() {
@@ -1116,6 +1139,7 @@
                 document.getElementById('dim-toggle-btn').innerText = this.state.showDimensions ? "DIMS: ON" : "DIMS: OFF";
                 document.getElementById('prof-toggle-btn').innerText = this.state.showProfileLabels ? "TYPE: ON" : "TYPE: OFF";
                 document.getElementById('project-name-input').value = this.state.projectName;
+                document.getElementById('project-notes-input').value = this.state.projectNotes || '';
             }
             addPart() {
                 const id = 'p' + Date.now(); this.state.parts.push({ id, name: 'Part ' + (this.state.parts.length + 1), color: '#ffffff', w: 20, h: 20, visible: true, inBlueprint: true, shapes: [] });
@@ -2112,6 +2136,17 @@
                 
                 // Update Project Title in Blueprint
                 document.getElementById('bp-project-title').innerText = this.state.projectName || "Project Blueprint";
+
+                // Update Blueprint Notes
+                const notes = this.state.projectNotes || '';
+                const notesContainer = document.getElementById('bp-notes-container');
+                const notesContent = document.getElementById('bp-notes-content');
+                if(notes.trim().length > 0) {
+                    notesContainer.classList.remove('hidden');
+                    notesContent.innerText = notes;
+                } else {
+                    notesContainer.classList.add('hidden');
+                }
 
                 this.renderBlueprintImages();
                 
