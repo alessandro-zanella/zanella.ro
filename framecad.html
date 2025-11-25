@@ -1186,8 +1186,20 @@
             toggleProfileLabels() {
                 this.state.showProfileLabels = !this.state.showProfileLabels;
                 document.getElementById('prof-toggle-btn').innerText = this.state.showProfileLabels ? "TYPE: ON" : "TYPE: OFF";
-                this.updateLabels(); // Refresh label text
+                this.updateLabelTextOnly(); // Optimization: Only update text once when toggled
                 this.commitState();
+            }
+
+            // NEW: Separate method to handle text updates only when necessary
+            updateLabelTextOnly() {
+                const labels = document.querySelectorAll('.dimension-label');
+                labels.forEach(l => {
+                    if(l.userData) {
+                        const { len, code } = l.userData;
+                        const displayText = (this.state.showProfileLabels ? (code + " - ") : "") + len;
+                        l.innerText = displayText;
+                    }
+                });
             }
 
             handlePartClick(e, id) {
@@ -1846,29 +1858,43 @@
             }
 
             updateLabels() {
-                const labels = document.querySelectorAll('.dimension-label');
-                labels.forEach(l => {
-                    // Update Visibility
-                    if(!this.state.showDimensions) {
-                        l.style.display = 'none';
-                        return;
-                    }
-                    
-                    // Update Text Content
-                    if(l.userData) {
-                        const { len, code } = l.userData;
-                        const displayText = (this.state.showProfileLabels ? (code + " - ") : "") + len;
-                        l.innerText = displayText;
-                    }
+                // Optimization: Abort early if dimensions are off
+                if(!this.state.showDimensions) {
+                    // If we haven't hidden them yet, do it once
+                    const container = document.getElementById('labels-container');
+                    if(container.style.display !== 'none') container.style.display = 'none';
+                    return;
+                } else {
+                    const container = document.getElementById('labels-container');
+                    if(container.style.display === 'none') container.style.display = 'block';
+                }
 
-                    // Update Position
+                const labels = document.querySelectorAll('.dimension-label');
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const widthHalf = width / 2;
+                const heightHalf = height / 2;
+
+                // Optimization: Re-use vector to avoid GC
+                if(!this._tempVec) this._tempVec = new THREE.Vector3();
+
+                labels.forEach(l => {
+                    // Removed DOM text update from loop to fix lag
+                    
                     if(!l.userData.pos3D) return;
-                    const v = new THREE.Vector3().copy(l.userData.pos3D).project(this.camera);
-                    if(v.z > 1) { l.style.display = 'none'; }
-                    else {
-                        l.style.display = 'block';
-                        l.style.left = ((v.x * .5 + .5) * window.innerWidth) + 'px';
-                        l.style.top = ((v.y * -.5 + .5) * window.innerHeight) + 'px';
+                    
+                    this._tempVec.copy(l.userData.pos3D).project(this.camera);
+                    
+                    // Optimization: Use transform instead of left/top for smoother composite, 
+                    // though simple left/top is okay if innerText isn't changing.
+                    if(this._tempVec.z > 1 || Math.abs(this._tempVec.x) > 1.1 || Math.abs(this._tempVec.y) > 1.1) { 
+                        if(l.style.display !== 'none') l.style.display = 'none'; 
+                    } else {
+                        if(l.style.display !== 'block') l.style.display = 'block';
+                        const x = (this._tempVec.x * widthHalf) + widthHalf;
+                        const y = -(this._tempVec.y * heightHalf) + heightHalf;
+                        l.style.left = x + 'px';
+                        l.style.top = y + 'px';
                     }
                 });
             }
