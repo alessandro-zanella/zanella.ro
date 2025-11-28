@@ -178,7 +178,10 @@
                 <span class="font-bold text-blue-400">SENS:</span>
                 <input type="range" min="0.1" max="3.0" step="0.1" value="1.0" class="w-16 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="app.updateSensitivity(this.value)" id="sens-input" title="Mouse Sensitivity">
             </div>
-            <button class="btn-sleek" onclick="app.exportJSON()">Save Project</button>
+            
+            <button class="btn-sleek bg-orange-600/20 text-orange-400 hover:bg-orange-600 hover:text-white border-orange-500/50" onclick="app.openProjectManager()">PROJECTS</button>
+            
+            <button class="btn-sleek" onclick="app.exportJSON()">Save File</button>
             <label class="btn-sleek cursor-pointer">
                 Load <input type="file" class="hidden" onchange="app.loadJSON(this)">
             </label>
@@ -355,6 +358,25 @@
     <!-- Dynamic Drawing Label -->
     <div id="drawing-indicator"></div>
 
+    <!-- Project Manager Modal -->
+    <div id="project-manager-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 border border-gray-600 rounded-lg w-full max-w-lg shadow-2xl p-6 flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-600 pb-2">
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider">Project Manager</h2>
+                <button class="text-gray-400 hover:text-white" onclick="document.getElementById('project-manager-modal').classList.add('hidden')">✕</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto mb-4 bg-gray-900/50 rounded border border-gray-700 p-2" id="project-list-container">
+                <!-- Project List Items will be injected here -->
+            </div>
+            
+            <div class="flex justify-between items-center pt-2">
+                <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-bold uppercase" onclick="app.createNewProject()">+ New Project</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded text-sm font-bold uppercase" onclick="document.getElementById('project-manager-modal').classList.add('hidden')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Blueprint Modal -->
     <div id="blueprint-modal" class="fixed inset-0 bg-white z-50 hidden overflow-auto text-black">
         <div class="max-w-[210mm] mx-auto bg-white min-h-screen p-8 shadow-2xl my-8 printable-area">
@@ -435,6 +457,7 @@
         class App {
             constructor() {
                 this.state = {
+                    projectId: 'default', // Replaced on load
                     parts: [{ id: 'p1', name: 'Frame', color: '#60a5fa', w: 20, h: 20, visible: true, inBlueprint: true, shapes: [] }],
                     activePartId: 'p1',
                     tool: 'select',
@@ -446,11 +469,11 @@
                     showDimensions: true,
                     showProfileLabels: false,
                     projectName: 'Untitled Project',
-                    projectNotes: '' // NEW: Store notes
+                    projectNotes: '' 
                 };
                 
                 // Purchase Optimization Settings (not strict state, but persistent)
-                this.stockLengths = {}; // format: { "20x20": 6000, "40x40": 3000 }
+                this.stockLengths = {}; 
 
                 // Fly / Navigation State
                 this.flySpeed = 10;
@@ -493,8 +516,8 @@
                 this.createGizmo();
                 this.createVertexHandles();
 
-                // Attempt to load from local storage
-                this.loadFromLocalStorage();
+                // INITIALIZE PROJECT SYSTEM INSTEAD OF DIRECT LOAD
+                this.initProjectSystem();
                 
                 this.initUI();
                 this.initInputs();
@@ -669,16 +692,54 @@
 
             setProjectName(val) {
                 this.state.projectName = val || 'Untitled Project';
-                this.saveToLocalStorage();
+                this.saveCurrentProject(); // Save changes immediately
             }
 
             setProjectNotes(val) {
                 this.state.projectNotes = val;
-                this.saveToLocalStorage();
+                this.saveCurrentProject();
             }
 
-            // --- LOCAL STORAGE & SAVING ---
-            saveToLocalStorage() {
+            // --- PROJECT MANAGEMENT SYSTEM ---
+            
+            initProjectSystem() {
+                // 1. Check for legacy single-project data
+                const legacy = localStorage.getItem('frame_cad_project');
+                let meta = localStorage.getItem('frame_cad_projects_meta');
+                
+                if (legacy && !meta) {
+                    // MIGRATION: Old system detected. Move to new system.
+                    const newId = 'proj_' + Date.now();
+                    const parsed = JSON.parse(legacy);
+                    const name = parsed.state?.projectName || "Migrated Project";
+                    
+                    // Save as new project
+                    localStorage.setItem('frame_cad_project_' + newId, legacy);
+                    
+                    // Create meta
+                    const newMeta = [{ id: newId, name: name, lastModified: Date.now() }];
+                    localStorage.setItem('frame_cad_projects_meta', JSON.stringify(newMeta));
+                    
+                    // Clean up old key to prevent re-migration
+                    localStorage.removeItem('frame_cad_project');
+                    
+                    this.loadProject(newId);
+                } else if (!meta) {
+                    // First time user, create a default project
+                    this.createNewProject(true);
+                } else {
+                    // Load last active or first in list
+                    const projects = JSON.parse(meta);
+                    const lastId = localStorage.getItem('frame_cad_last_project_id');
+                    const target = projects.find(p => p.id === lastId) || projects[0];
+                    if(target) this.loadProject(target.id);
+                    else this.createNewProject(true);
+                }
+            }
+
+            saveCurrentProject() {
+                if(!this.state.projectId) return;
+                
                 try {
                     const saveData = {
                         version: 2, 
@@ -690,33 +751,55 @@
                             drawingY: this.state.drawingY,
                             planeStep: parseFloat(document.getElementById('plane-step-input').value) || 50,
                             showDimensions: this.state.showDimensions,
-                            showProfileLabels: this.state.showProfileLabels, // Persist setting
+                            showProfileLabels: this.state.showProfileLabels, 
                             stockLengths: this.stockLengths
                         },
                         camera: {
                             position: this.camera.position.toArray(),
-                            rotation: this.camera.rotation.toArray().slice(0, 3), // x, y, z
+                            rotation: this.camera.rotation.toArray().slice(0, 3), 
                             rotationOrder: this.camera.rotation.order,
                             target: this.controls.target.toArray(),
                             mode: this.state.cameraMode
                         }
                     };
-                    localStorage.setItem('frame_cad_project', JSON.stringify(saveData));
+                    
+                    // Save actual data
+                    localStorage.setItem('frame_cad_project_' + this.state.projectId, JSON.stringify(saveData));
+                    localStorage.setItem('frame_cad_last_project_id', this.state.projectId);
+
+                    // Update Meta List
+                    let meta = JSON.parse(localStorage.getItem('frame_cad_projects_meta') || '[]');
+                    const existingIdx = meta.findIndex(p => p.id === this.state.projectId);
+                    
+                    if(existingIdx >= 0) {
+                        meta[existingIdx].name = this.state.projectName;
+                        meta[existingIdx].lastModified = Date.now();
+                    } else {
+                        meta.push({ id: this.state.projectId, name: this.state.projectName, lastModified: Date.now() });
+                    }
+                    localStorage.setItem('frame_cad_projects_meta', JSON.stringify(meta));
                     
                     const indicator = document.getElementById('save-indicator');
                     indicator.style.opacity = '1';
                     setTimeout(() => indicator.style.opacity = '0', 1000);
-                } catch(e) { console.error("AutoSave Failed:", e); }
+                } catch(e) { console.error("Save Failed:", e); }
             }
 
-            loadFromLocalStorage() {
+            loadProject(id) {
                 try {
-                    const raw = localStorage.getItem('frame_cad_project');
-                    if (!raw) return;
-                    const data = JSON.parse(raw);
+                    const raw = localStorage.getItem('frame_cad_project_' + id);
+                    if (!raw) {
+                         console.error("Project data not found for id:", id);
+                         return;
+                    }
                     
+                    const data = JSON.parse(raw);
                     this.state = data.state;
                     
+                    // IMPORTANT: Ensure projectId in state matches loaded ID
+                    this.state.projectId = id;
+
+                    // Restore Settings
                     if(data.settings) {
                         this.flySpeed = data.settings.flySpeed || 10;
                         this.lookSensitivityMultiplier = data.settings.sensitivity || 1.0;
@@ -728,10 +811,11 @@
                         if(data.settings.stockLengths) this.stockLengths = data.settings.stockLengths;
                     }
                     
-                    // Default name if missing
+                    // Defaults
                     if(!this.state.projectName) this.state.projectName = 'Untitled Project';
-                    if(this.state.projectNotes === undefined) this.state.projectNotes = ''; // Default if missing
+                    if(this.state.projectNotes === undefined) this.state.projectNotes = '';
 
+                    // Restore Camera
                     if(data.camera) {
                         this.state.cameraMode = data.camera.mode || 'perspective';
                         if(this.state.cameraMode === 'ortho') {
@@ -752,11 +836,124 @@
                         }
                         this.controls.object = this.camera;
                     }
-                    this.rebuildGeometry();
+
+                    // Reset Session State
                     this.history = [];
                     this.historyIndex = -1;
+                    this.rebuildGeometry();
                     
-                } catch(e) { console.error("Load AutoSave Failed:", e); }
+                    // Refresh UI
+                    this.renderPartsList();
+                    this.updateUIFields();
+                    this.updateGridSettings();
+                    
+                    // Close Modal if open
+                    document.getElementById('project-manager-modal').classList.add('hidden');
+                    
+                    // Persist last loaded
+                    localStorage.setItem('frame_cad_last_project_id', id);
+
+                } catch(e) { console.error("Load Failed:", e); }
+            }
+
+            createNewProject(silent = false) {
+                const newId = 'proj_' + Date.now();
+                const defaultState = {
+                    projectId: newId,
+                    parts: [{ id: 'p1', name: 'Frame', color: '#60a5fa', w: 20, h: 20, visible: true, inBlueprint: true, shapes: [] }],
+                    activePartId: 'p1',
+                    tool: 'select',
+                    gridSize: 50,
+                    snapToParts: true,
+                    drawingY: 0,
+                    cameraMode: 'perspective',
+                    blueprintImages: [],
+                    showDimensions: true,
+                    showProfileLabels: false,
+                    projectName: 'New Project ' + new Date().toLocaleDateString(),
+                    projectNotes: ''
+                };
+                
+                // Set state directly
+                this.state = defaultState;
+                this.history = [];
+                this.historyIndex = -1;
+                this.selections = [];
+                
+                // Reset Camera
+                this.perspCamera.position.set(800, 600, 800);
+                this.perspCamera.lookAt(0,0,0);
+                this.controls.target.set(0,0,0);
+                this.camera = this.perspCamera;
+                
+                this.saveCurrentProject(); // Saves to disk and updates meta
+                this.loadProject(newId); // Re-inits everything
+                
+                if(!silent) document.getElementById('project-manager-modal').classList.add('hidden');
+            }
+
+            deleteProject(id) {
+                if(!confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+                
+                // Remove Data
+                localStorage.removeItem('frame_cad_project_' + id);
+                
+                // Update Meta
+                let meta = JSON.parse(localStorage.getItem('frame_cad_projects_meta') || '[]');
+                meta = meta.filter(p => p.id !== id);
+                localStorage.setItem('frame_cad_projects_meta', JSON.stringify(meta));
+                
+                // If deleted current project, switch
+                if (id === this.state.projectId) {
+                    if (meta.length > 0) {
+                        this.loadProject(meta[0].id);
+                    } else {
+                        this.createNewProject(true);
+                    }
+                } else {
+                    // Just refresh list
+                    this.renderProjectList();
+                }
+            }
+
+            openProjectManager() {
+                this.renderProjectList();
+                document.getElementById('project-manager-modal').classList.remove('hidden');
+            }
+
+            renderProjectList() {
+                const container = document.getElementById('project-list-container');
+                container.innerHTML = '';
+                
+                let meta = JSON.parse(localStorage.getItem('frame_cad_projects_meta') || '[]');
+                
+                // Sort by date desc
+                meta.sort((a,b) => b.lastModified - a.lastModified);
+                
+                if (meta.length === 0) {
+                    container.innerHTML = '<div class="text-gray-500 text-center py-4">No projects found.</div>';
+                    return;
+                }
+
+                meta.forEach(p => {
+                    const isCurrent = p.id === this.state.projectId;
+                    const dateStr = new Date(p.lastModified).toLocaleString();
+                    
+                    const div = document.createElement('div');
+                    div.className = `flex justify-between items-center p-3 mb-1 rounded border ${isCurrent ? 'bg-blue-900/30 border-blue-500' : 'bg-gray-800 border-gray-700 hover:bg-gray-700'}`;
+                    
+                    div.innerHTML = `
+                        <div class="flex-1 cursor-pointer" onclick="app.loadProject('${p.id}')">
+                            <div class="font-bold text-sm ${isCurrent ? 'text-blue-300' : 'text-gray-200'}">${p.name} ${isCurrent ? '(Active)' : ''}</div>
+                            <div class="text-[10px] text-gray-500">${dateStr}</div>
+                        </div>
+                        <div class="flex gap-2">
+                             ${!isCurrent ? `<button class="text-xs bg-red-900/50 hover:bg-red-700 text-red-300 px-2 py-1 rounded border border-red-800" onclick="app.deleteProject('${p.id}')">Delete</button>` : ''}
+                             ${!isCurrent ? `<button class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded" onclick="app.loadProject('${p.id}')">Load</button>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
             }
 
             exportJSON() {
@@ -792,44 +989,20 @@
                     try {
                         const data = JSON.parse(e.target.result);
                         if (data.state) {
-                            this.state = data.state;
-                            // Restore settings if available
-                            if(data.settings) {
-                                this.flySpeed = data.settings.flySpeed || 10;
-                                this.lookSensitivityMultiplier = data.settings.sensitivity || 1.0;
-                                if(data.settings.showDimensions !== undefined) this.state.showDimensions = data.settings.showDimensions;
-                                if(data.settings.showProfileLabels !== undefined) this.state.showProfileLabels = data.settings.showProfileLabels;
-                                if(data.settings.stockLengths) this.stockLengths = data.settings.stockLengths;
-                            }
-                            if(!this.state.projectName) this.state.projectName = 'Untitled Project';
-                            if(this.state.projectNotes === undefined) this.state.projectNotes = '';
-
-                            // Restore Camera if available
-                             if(data.camera) {
-                                this.state.cameraMode = data.camera.mode || 'perspective';
-                                if(this.state.cameraMode === 'ortho') {
-                                     this.camera = this.orthoCamera;
-                                     document.getElementById('cam-toggle').innerText = 'Ortho';
-                                     document.getElementById('nav-hint').innerText = "WASD(Zoom)+QE";
-                                } else {
-                                     this.camera = this.perspCamera;
-                                     document.getElementById('cam-toggle').innerText = 'Persp';
-                                     document.getElementById('nav-hint').innerText = "WASD+QE";
-                                }
-                                this.camera.position.fromArray(data.camera.position);
-                                if(data.camera.target) this.controls.target.fromArray(data.camera.target);
-                                this.camera.lookAt(this.controls.target);
-                                this.controls.object = this.camera;
-                            }
+                            // When loading from file, treat as a NEW project to avoid overwriting current ID
+                            const newId = 'proj_' + Date.now();
+                            data.state.projectId = newId; 
                             
-                            this.history = [];
-                            this.historyIndex = -1;
-                            this.commitState(); // Save loaded state as first history item
+                            // Save to local storage as new project
+                            localStorage.setItem('frame_cad_project_' + newId, JSON.stringify(data));
                             
-                            this.rebuildGeometry();
-                            this.renderPartsList();
-                            this.updateUIFields();
-                            this.updateGridSettings();
+                            // Update meta
+                            let meta = JSON.parse(localStorage.getItem('frame_cad_projects_meta') || '[]');
+                            meta.push({ id: newId, name: data.state.projectName || "Imported Project", lastModified: Date.now() });
+                            localStorage.setItem('frame_cad_projects_meta', JSON.stringify(meta));
+                            
+                            // Load it
+                            this.loadProject(newId);
                             
                             // Reset input
                             input.value = '';
@@ -951,7 +1124,7 @@
                         const dir = e.deltaY < 0 ? 1.1 : 0.9;
                         this.flySpeed = Math.max(1, Math.min(200, this.flySpeed * dir));
                         document.getElementById('speed-val').innerText = this.flySpeed.toFixed(1);
-                        this.saveToLocalStorage(); 
+                        this.saveCurrentProject(); // Changed from saveToLocalStorage
                     }
                 }, { passive: false });
             }
@@ -1020,12 +1193,18 @@
                 this.history.push(JSON.stringify(this.state));
                 this.historyIndex++;
                 if(this.history.length > 50) { this.history.shift(); this.historyIndex--; }
-                this.saveToLocalStorage();
+                this.saveCurrentProject(); // Changed from saveToLocalStorage
             }
-            undo() { if (this.historyIndex > 0) { this.historyIndex--; this.restoreState(this.history[this.historyIndex]); this.saveToLocalStorage(); } }
-            redo() { if (this.historyIndex < this.history.length - 1) { this.historyIndex++; this.restoreState(this.history[this.historyIndex]); this.saveToLocalStorage(); } }
+            undo() { if (this.historyIndex > 0) { this.historyIndex--; this.restoreState(this.history[this.historyIndex]); this.saveCurrentProject(); } }
+            redo() { if (this.historyIndex < this.history.length - 1) { this.historyIndex++; this.restoreState(this.history[this.historyIndex]); this.saveCurrentProject(); } }
+            
             restoreState(json) {
-                this.state = JSON.parse(json);
+                const data = JSON.parse(json);
+                // Keep the current project ID, even if history has an old one (edge case)
+                const currentId = this.state.projectId; 
+                this.state = data;
+                this.state.projectId = currentId; // Enforce current ID
+
                 if(this.state.snapToParts === undefined) this.state.snapToParts = true;
                 if(!this.state.blueprintImages) this.state.blueprintImages = [];
                 if(this.state.showDimensions === undefined) this.state.showDimensions = true;
@@ -1103,7 +1282,7 @@
                 
                 const fwd = new THREE.Vector3(0,0,-1).applyQuaternion(this.camera.quaternion).multiplyScalar(100);
                 this.controls.target.copy(this.camera.position).add(fwd);
-                this.saveToLocalStorage();
+                this.saveCurrentProject(); // Changed from saveToLocalStorage
             }
 
             // ... (Other View/Resize methods standard) ...
@@ -1290,7 +1469,7 @@
 
             updateGridSettings() { const newSize = parseFloat(document.getElementById('grid-size-input').value) || 50; const oldSize = this.state.gridSize; this.state.gridSize = newSize; this.currentGridStep = -1; this.updateGridVisuals(); document.getElementById('plane-slider').step = parseFloat(document.getElementById('plane-step-input').value) || 50; if(oldSize !== newSize) this.commitState(); }
             togglePartSnap(val) { this.state.snapToParts = val; this.commitState(); }
-            updateSensitivity(val) { this.lookSensitivityMultiplier = parseFloat(val); this.saveToLocalStorage(); }
+            updateSensitivity(val) { this.lookSensitivityMultiplier = parseFloat(val); this.saveCurrentProject(); } // Changed from saveToLocalStorage
             setTool(tool) {
                 this.state.tool = tool;
                 if(tool !== 'select') { this.selections = []; this.updateSelectionUI(); this.rebuildGeometry(); }
@@ -1318,7 +1497,7 @@
                     if (this.state.cameraMode === 'ortho') this.toggleCamera(); 
                 }
                 
-                this.camera.lookAt(origin); if(this.state.cameraMode === 'ortho') this.camera.zoom = 1; this.onResize(); this.saveToLocalStorage();
+                this.camera.lookAt(origin); if(this.state.cameraMode === 'ortho') this.camera.zoom = 1; this.onResize(); this.saveCurrentProject(); // Changed from saveToLocalStorage
             }
 
             getIntersect(event) {
@@ -1397,8 +1576,9 @@
                             // Get intersection point on a plane parallel to camera
                             const planeNormal = new THREE.Vector3(0,0,1).applyQuaternion(this.camera.quaternion);
                             const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(planeNormal, this.selectionCenter);
+                            this.raycaster.ray.intersectPlane(this.gizmoStartPos, plane); // Fixed plane intersect order if needed, but previously worked
                             this.raycaster.ray.intersectPlane(plane, this.gizmoStartPos);
-                            
+
                             // Store original positions for all selected items
                             this.selectionStartPositions = this.selections.map(sel => ({
                                 shapeRef: sel.shapeRef,
@@ -1430,7 +1610,7 @@
                     this.isLooking = false; // Stop looking immediately to prevent jump
                     document.exitPointerLock();
                     const dist = this.rmbDownPos.distanceTo(new THREE.Vector2(e.clientX, e.clientY));
-                    if (dist < this.rmbDragThreshold) { this.cancelDrawing(); } else { this.saveToLocalStorage(); }
+                    if (dist < this.rmbDragThreshold) { this.cancelDrawing(); } else { this.saveCurrentProject(); }
                 }
                 if (e.button === 0) {
                     if (this.gizmoMode || this.vertexEditMode) {
@@ -1602,6 +1782,8 @@
                 }
                 this.commitState(); this.rebuildGeometry(); this.renderPartsList();
             }
+
+            // ... (Rest of methods kept as is) ...
 
             // --- RESTORED MISSING METHODS ---
 
@@ -2037,7 +2219,7 @@
             
             recalcPurchaseList() {
                 this.renderPurchaseList(); // Redraws and recalculates
-                this.saveToLocalStorage();
+                this.saveCurrentProject(); // Changed from saveToLocalStorage
             }
 
             renderPurchaseList() {
