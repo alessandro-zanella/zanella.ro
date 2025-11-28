@@ -1576,7 +1576,6 @@
                             // Get intersection point on a plane parallel to camera
                             const planeNormal = new THREE.Vector3(0,0,1).applyQuaternion(this.camera.quaternion);
                             const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(planeNormal, this.selectionCenter);
-                            this.raycaster.ray.intersectPlane(this.gizmoStartPos, plane); // Fixed plane intersect order if needed, but previously worked
                             this.raycaster.ray.intersectPlane(plane, this.gizmoStartPos);
 
                             // Store original positions for all selected items
