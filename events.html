@@ -410,45 +410,64 @@
         : '';
       
       // Build offers HTML (up to 3 offers) - compact, each in own panel
-      const offersHtml = event.offers && Array.isArray(event.offers) && event.offers.length > 0
-        ? (() => {
-            // Filter out invalid offers and take up to 3
-            const validOffers = event.offers
-              .filter(offer => offer && (offer.name || offer.title))
-              .slice(0, 3);
-            
-            if (validOffers.length === 0) return '';
-            
-            return `
-              <div class="event-offers">
-                <h3 style="margin:0 0 1rem; font-size:1.2rem; color:var(--text);">Available Offers</h3>
-                <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                  ${validOffers.map(offer => {
-                    const name = offer.name || offer.title || '';
-                    const description = offer.description || '';
-                    const price = offer.price || '';
-                    const paymentLink = offer.paymentLink || offer.href || '';
-                    
-                    return `
-                      <div class="card" style="padding:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
-                        <div style="flex:1; min-width:200px;">
-                          ${name ? `<h4 style="margin:0 0 4px; font-size:1rem; font-weight:600; color:var(--text);">${name}</h4>` : ''}
-                          ${description ? `<p style="margin:0 0 6px; font-size:0.9rem; color:var(--muted); line-height:1.4;">${description}</p>` : ''}
-                          ${price ? `<p style="margin:0; font-size:1rem; font-weight:700; color:var(--accent-2);">${price}</p>` : ''}
-                        </div>
-                        ${paymentLink ? `
-                          <div style="flex-shrink:0;">
-                            <a href="${paymentLink}" class="btn btn-gold" target="_blank" rel="noopener" style="white-space:nowrap;">Buy Now</a>
-                          </div>
-                        ` : ''}
+      const offersHtml = (() => {
+        // Check if offers should be shown (defaults to true if not specified)
+        if (event.showOffers === false) {
+          return '';
+        }
+        
+        // Check if offers exist and are valid
+        if (!event.offers || !Array.isArray(event.offers) || event.offers.length === 0) {
+          return '';
+        }
+        
+        // Filter out invalid offers - must have name/title AND at least one other field
+        const validOffers = event.offers
+          .filter(offer => {
+            if (!offer || typeof offer !== 'object') return false;
+            const hasName = !!(offer.name || offer.title);
+            const hasContent = !!(offer.description || offer.price || offer.paymentLink || offer.href);
+            return hasName && hasContent;
+          })
+          .slice(0, 3);
+        
+        if (validOffers.length === 0) {
+          return '';
+        }
+        
+        return `
+          <div class="event-offers">
+            <h3 style="margin:0 0 1rem; font-size:1.2rem; color:var(--text);">Available Offers</h3>
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              ${validOffers.map(offer => {
+                // Safely extract values with fallbacks
+                const name = String(offer.name || offer.title || '').trim();
+                const description = String(offer.description || '').trim();
+                const price = String(offer.price || '').trim();
+                const paymentLink = String(offer.paymentLink || offer.href || '').trim();
+                
+                // Skip if name is empty (shouldn't happen due to filter, but double-check)
+                if (!name) return '';
+                
+                return `
+                  <div class="card" style="padding:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
+                      <h4 style="margin:0 0 4px; font-size:1rem; font-weight:600; color:var(--text);">${name}</h4>
+                      ${description ? `<p style="margin:0 0 6px; font-size:0.9rem; color:var(--muted); line-height:1.4;">${description}</p>` : ''}
+                      ${price ? `<p style="margin:0; font-size:1rem; font-weight:700; color:var(--accent-2);">${price}</p>` : ''}
+                    </div>
+                    ${paymentLink && paymentLink !== '#' ? `
+                      <div style="flex-shrink:0;">
+                        <a href="${paymentLink}" class="btn btn-gold" target="_blank" rel="noopener" style="white-space:nowrap;">Buy Now</a>
                       </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-            `;
-          })()
-        : '';
+                    ` : ''}
+                  </div>
+                `;
+              }).filter(html => html !== '').join('')}
+            </div>
+          </div>
+        `;
+      })();
       
       // Get contact info HTML
       const contactHtml = getContactInfoHtml();

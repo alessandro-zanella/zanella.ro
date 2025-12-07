@@ -13,6 +13,30 @@
         "Champagne toast at midnight",
         "Party favors and surprises",
         "Elegant atmosphere with premium service"
+      ],
+      "showOffers": false,
+      "offers": [
+        {
+          "name": "Standard Ticket",
+          "description": "Entry, dinner, and welcome cocktail",
+          "price": "RON 350",
+          "paymentLink": "#",
+          "type": "buy"
+        },
+        {
+          "name": "Premium Ticket",
+          "description": "Entry, dinner, premium cocktails, and reserved seating",
+          "price": "RON 550",
+          "paymentLink": "#",
+          "type": "buy"
+        },
+        {
+          "name": "VIP Experience",
+          "description": "Full access, premium dinner, unlimited cocktails, VIP area, and special perks",
+          "price": "RON 850",
+          "paymentLink": "#",
+          "type": "buy"
+        }
       ]
     },
     {
@@ -28,6 +52,7 @@
         "Cozy cabin atmosphere",
         "Group activities and entertainment"
       ],
+      "showOffers": true,
       "offers": [
         {
           "name": "Weekend Package",
