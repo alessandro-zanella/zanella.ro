@@ -1,0 +1,33 @@
+{
+  "events": [
+    {
+      "title": "Revelion 2025/26",
+      "description": "Petrecere de Revelion 2025/26 la Zanella: muzică selectă, cină festivă, cocktailuri speciale, atmosferă elegantă și surprize pe tot parcursul nopții.",
+      "location": "Zanella Lounge, Strada Ciocarliei 15, Cluj-Napoca",
+      "date": "December 31, 2025",
+      "offers": [
+        {
+          "text": "More Info",
+          "href": "#wine-tasting",
+          "type": "info",
+          "class": "btn btn-ghost"
+        }
+      ]
+    },
+    {
+      "title": "Cabana 30 Ianuarie - 1 Februarie 2026",
+      "description": "Ne intrunim la Cabana 30 Ianuarie - 1 Februarie 2026 in Somesul Rece, Gilau",
+      "location": "Somesul Rece, Gilau",
+      "date": "30 Ianuarie - 1 Februarie 2026",
+      "offers": [
+        {
+          "text": "More Info",
+          "href": "#wine-tasting",
+          "type": "info",
+          "class": "btn btn-ghost"
+        }
+      ]
+    }
+  ]
+}
+

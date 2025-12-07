@@ -408,13 +408,11 @@
         if (pricingExtras && eventsData.pricing.extrasNote) pricingExtras.textContent = eventsData.pricing.extrasNote;
 
         // Populate Contact
-        const contactTitle = document.querySelector('#contact .bg-panel h2');
+        const contactTitle = document.querySelector('#contact .card h2');
         if (contactTitle && contactData.title) contactTitle.textContent = contactData.title;
-        const contactDescs = document.querySelectorAll('#contact .bg-panel .inline-note');
-        if (contactDescs.length && contactData.description) {
-          contactDescs.forEach((desc, i) => {
-            if (contactData.description[i]) desc.textContent = contactData.description[i];
-          });
+        const contactDesc = document.querySelector('#contact .card .inline-note');
+        if (contactDesc && contactData.description && contactData.description.length > 0) {
+          contactDesc.textContent = contactData.description[0];
         }
         const contactInfo = document.getElementById('contactInfo');
         if (contactInfo && contactData.contactInfo) {

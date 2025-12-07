@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Zanella Events</title>
+  <meta name="description" content="Upcoming events at Zanella Lounge — join us for special evenings and experiences." />
+  <!-- PWA / mobile chrome hints -->
+  <meta name="theme-color" content="#171b1f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <div class="nav">
+    <div class="container nav-inner">
+      <a href="/index.html" class="brand" aria-label="Zanella">
+        <img src="assets/ZANELLA%20LOGO%20WHITE.png" alt="Zanella Lounge" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">
+      </a>
+      <nav style="display:flex; gap:1rem; align-items:center;" aria-label="Primary">
+        <div class="nav-links" style="display:flex; gap:1rem; align-items:center">
+          <a href="lounge.html#about">About</a>
+          <a href="lounge.html#menuSection">Menu</a>
+          <a href="lounge.html#contact">Contact</a>
+        </div>
+        <div class="nav-social" style="display:flex; gap:.6rem; align-items:center; margin-left:12px">
+          <a href="https://www.instagram.com/zanella_lounge/" aria-label="Instagram" target="_blank" rel="noopener" style="color:var(--muted); display:inline-flex; align-items:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.2a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm4.2-2.6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61580371774552" aria-label="Facebook" target="_blank" rel="noopener" style="color:var(--muted); display:inline-flex; align-items:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v7h4v-7h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Upcoming Events List -->
+  <section id="events-list" class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="reveal">
+        <h2 style="margin-bottom:1rem;">Upcoming Events</h2>
+        <p class="inline-note" style="margin-bottom:2rem;">Join us for special evenings and experiences.</p>
+      </div>
+      <div id="eventsListContainer" class="grid" style="grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+        <!-- Events will be populated from JSON -->
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <span>&copy; <span id="year"></span> Zanella Lounge</span>
+      <span style="display:flex; gap:12px"><a href="https://www.instagram.com/zanella_lounge/">Instagram</a><a href="https://www.facebook.com/profile.php?id=61580371774552">Facebook</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // Set --vh CSS variable for mobile browser viewport handling
+    (function setVh(){
+      function update(){
+        try{ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }catch(e){}
+      }
+      update();
+      window.addEventListener('resize', update);
+      window.addEventListener('orientationchange', update);
+    })();
+
+    // Particles
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      const canvas = document.getElementById('particles');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 1.5 + 0.5,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5
+          });
+        }
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = 'rgba(255,255,255,0.1)';
+          particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        });
+      }
+    }
+
+    // Content Loader — Load events list JSON
+    async function loadEvents() {
+      try {
+        const eventsListData = await fetch('content/events-list.json').then(r => r.json());
+        const footerData = await fetch('content/footer.json').then(r => r.json());
+
+        // Helper function to parse date and check if event has passed
+        function parseEventDate(dateString) {
+          if (!dateString) return null;
+          
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          // Romanian month names mapping
+          const romanianMonths = {
+            'ianuarie': 0, 'februarie': 1, 'martie': 2, 'aprilie': 3,
+            'mai': 4, 'iunie': 5, 'iulie': 6, 'august': 7,
+            'septembrie': 8, 'octombrie': 9, 'noiembrie': 10, 'decembrie': 11
+          };
+          
+          try {
+            // Handle date ranges (e.g., "30 Ianuarie - 1 Februarie 2026")
+            if (dateString.includes(' - ')) {
+              const parts = dateString.split(' - ');
+              const endDateStr = parts[parts.length - 1].trim();
+              dateString = endDateStr; // Use the end date
+            }
+            
+            // Try parsing Romanian date format (e.g., "1 Februarie 2026")
+            const romanianMatch = dateString.match(/(\d+)\s+([a-z]+)\s+(\d+)/i);
+            if (romanianMatch) {
+              const day = parseInt(romanianMatch[1]);
+              const monthName = romanianMatch[2].toLowerCase();
+              const year = parseInt(romanianMatch[3]);
+              
+              if (romanianMonths[monthName] !== undefined) {
+                const eventDate = new Date(year, romanianMonths[monthName], day);
+                eventDate.setHours(23, 59, 59, 999); // End of day
+                return eventDate >= today;
+              }
+            }
+            
+            // Try parsing standard English date format (e.g., "December 31, 2025")
+            const englishMonths = {
+              'january': 0, 'february': 1, 'march': 2, 'april': 3,
+              'may': 4, 'june': 5, 'july': 6, 'august': 7,
+              'september': 8, 'october': 9, 'november': 10, 'december': 11
+            };
+            
+            const englishMatch = dateString.match(/([a-z]+)\s+(\d+),\s+(\d+)/i);
+            if (englishMatch) {
+              const monthName = englishMatch[1].toLowerCase();
+              const day = parseInt(englishMatch[2]);
+              const year = parseInt(englishMatch[3]);
+              
+              if (englishMonths[monthName] !== undefined) {
+                const eventDate = new Date(year, englishMonths[monthName], day);
+                eventDate.setHours(23, 59, 59, 999); // End of day
+                return eventDate >= today;
+              }
+            }
+            
+            // Try standard Date parsing as fallback
+            const parsedDate = new Date(dateString);
+            if (!isNaN(parsedDate.getTime())) {
+              parsedDate.setHours(23, 59, 59, 999);
+              return parsedDate >= today;
+            }
+            
+            // If we can't parse, show the event (better to show than hide)
+            return true;
+          } catch (e) {
+            console.warn('Could not parse date:', dateString, e);
+            // If parsing fails, show the event
+            return true;
+          }
+        }
+
+        // Populate Events List
+        const eventsListContainer = document.getElementById('eventsListContainer');
+        if (eventsListContainer && eventsListData && eventsListData.events) {
+          // Filter out past events
+          const upcomingEvents = eventsListData.events.filter(event => {
+            if (!event.date) return true; // Show events without dates
+            return parseEventDate(event.date);
+          });
+          
+          if (upcomingEvents.length === 0) {
+            eventsListContainer.innerHTML = '<div class="card reveal" style="padding:24px; text-align:center;"><p style="color:var(--muted);">No upcoming events at this time. Check back soon!</p></div>';
+          } else {
+            eventsListContainer.innerHTML = upcomingEvents.map((event, index) => {
+              const offersHtml = event.offers && event.offers.length > 0 
+                ? `<div style="display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem;">${event.offers.map(offer => 
+                    `<a href="${offer.href}" class="${offer.class}" ${offer.type === 'buy' ? 'target="_blank" rel="noopener"' : ''}>${offer.text}</a>`
+                  ).join('')}</div>`
+                : '';
+              
+              return `
+                <div class="card reveal" style="padding:24px; display:flex; flex-direction:column;">
+                  <h3 style="margin:0 0 .6rem; font-size:1.3rem; color:var(--text);">${event.title}</h3>
+                  ${event.date ? `<p class="inline-note" style="margin:0 0 .8rem; font-size:.9rem;">${event.date}</p>` : ''}
+                  <p style="margin:0 0 1rem; color:var(--muted); line-height:1.6; flex-grow:1;">${event.description}</p>
+                  <p style="margin:0; color:var(--text); font-size:.95rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    ${event.location}
+                  </p>
+                  ${offersHtml}
+                </div>
+              `;
+            }).join('');
+          }
+          
+          // Re-enable reveal animation for newly added elements
+          if (typeof enableReveal === 'function') {
+            enableReveal();
+          }
+        } else {
+          console.error('Events container not found or events data missing', {
+            container: eventsListContainer,
+            data: eventsListData
+          });
+        }
+
+        // Populate Footer
+        const footerCopyright = document.querySelector('footer span:first-child');
+        if (footerCopyright && footerData.copyright) {
+          footerCopyright.innerHTML = `&copy; <span id="year"></span> ${footerData.copyright}`;
+        }
+        const footerSocial = document.querySelector('footer span:last-child');
+        if (footerSocial && footerData.social) {
+          footerSocial.innerHTML = footerData.social.map(s => `<a href="${s.url}">${s.text}</a>`).join('');
+        }
+      } catch (error) {
+        console.error('Error loading events:', error);
+      }
+    }
+
+    // Reveal animation on scroll
+    function enableReveal() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+      reveals.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s cubic-bezier(.16,1,.3,1), transform 0.6s cubic-bezier(.16,1,.3,1)';
+        observer.observe(el);
+      });
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadEvents();
+      // Wait a bit for DOM to update, then enable reveal
+      setTimeout(() => {
+        enableReveal();
+      }, 100);
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>
+
