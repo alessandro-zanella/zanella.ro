@@ -295,13 +295,13 @@
       try {
         // Load all JSON files in parallel
         const [navData, heroData, aboutData, menuData, eventsData, contactData, footerData] = await Promise.all([
-          fetch('content/nav.json').then(r => r.json()),
-          fetch('content/hero.json').then(r => r.json()),
-          fetch('content/about.json').then(r => r.json()),
-          fetch('content/menu.json').then(r => r.json()),
-          fetch('content/events.json').then(r => r.json()),
-          fetch('content/contact.json').then(r => r.json()),
-          fetch('content/footer.json').then(r => r.json())
+          fetch('content/lounge/navigation.json').then(r => r.json()),
+          fetch('content/lounge/hero.json').then(r => r.json()),
+          fetch('content/lounge/about.json').then(r => r.json()),
+          fetch('content/lounge/menu.json').then(r => r.json()),
+          fetch('content/lounge/events.json').then(r => r.json()),
+          fetch('content/lounge/contact.json').then(r => r.json()),
+          fetch('content/shared/footer.json').then(r => r.json())
         ]);
 
         // Populate Navigation

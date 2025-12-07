@@ -433,7 +433,7 @@
     // Load panels from JSON
     async function loadPanels() {
       try {
-        const indexData = await fetch('content/index.json').then(r => r.json());
+        const indexData = await fetch('content/index/index.json').then(r => r.json());
         
         // Update title
         const titleEl = document.getElementById('landingTitle');
