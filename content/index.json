@@ -1,0 +1,33 @@
+{
+  "title": "Choose Your Experience",
+  "panels": [
+    {
+      "title": "Zanella Lounge",
+      "description": "A smart-casual lounge to eat, drink, and socialize in an elegant, modern setting.",
+      "link": "lounge.html",
+      "order": 2,
+      "enabled": true,
+      "icon": "wine-glass",
+      "buttonText": "Enter Lounge"
+    },
+    {
+      "title": "Zanella Events",
+      "description": "Join us for special evenings and experiences. View upcoming events and book your spot.",
+      "link": "events.html",
+      "order": 1,
+      "enabled": true,
+      "icon": "calendar",
+      "buttonText": "View Events"
+    },
+    {
+      "title": "Zanella Resort",
+      "description": "Coming soon. Experience luxury hospitality and world-class amenities.",
+      "link": null,
+      "order": 3,
+      "enabled": false,
+      "icon": "house",
+      "buttonText": "Coming Soon"
+    }
+  ]
+}
+

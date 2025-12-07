@@ -59,11 +59,26 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 
 /* Sticky Nav */
 .nav{ position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(10px); background:rgba(23,27,31,.6); border-bottom:1px solid var(--line) }
-.nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px }
+.nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px; padding:0 20px }
 .brand{ display:flex; align-items:center; gap:.75rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase }
 .brand-mark{ width:28px; height:28px; border-radius:8px; background: conic-gradient(from 180deg, var(--accent-2), var(--accent), var(--accent-2)); box-shadow:0 0 0 2px rgba(0,0,0,.35) inset }
 .nav a{ color:var(--muted); font-size:.95rem } .nav a:hover{ color:var(--text) }
 .nav-links{ display:flex; gap:1rem }
+
+@media(max-width:768px){
+  .nav-inner{ height:56px; padding:0 15px }
+  .nav-links{ gap:.75rem }
+  .nav a{ font-size:.875rem }
+  .brand img{ height:24px !important; padding-right:20px !important }
+}
+
+@media(max-width:480px){
+  .nav-inner{ height:52px; padding:0 12px }
+  .nav-links{ gap:.5rem; flex-wrap:wrap }
+  .nav a{ font-size:.8rem }
+  .nav-social{ margin-left:8px !important; gap:.4rem !important }
+  .brand img{ height:20px !important; padding-right:15px !important }
+}
 
 .hero{
   position:relative;
@@ -106,6 +121,21 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 .hero h1 .accent{ color: var(--accent-3); text-shadow: 0 0 18px rgba(95,179,140,.25); }
 .hero p{ color:var(--muted); margin:.5rem auto 1.2rem; max-width:36rem }
 .hero-ctas{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap }
+
+@media(max-width:768px){
+  .hero{ min-height: calc( (var(--vh, 1vh) * 100) - 56px ); padding-top:20px }
+  .hero-content{ padding:0 15px }
+  .hero-logo{ max-width:70% !important; margin-bottom:1rem !important }
+  .hero-ctas{ gap:.6rem }
+}
+
+@media(max-width:480px){
+  .hero{ min-height: calc( (var(--vh, 1vh) * 100) - 52px ); padding-top:15px }
+  .hero-content{ padding:0 12px }
+  .hero-logo{ max-width:60% !important; margin-bottom:.75rem !important }
+  .hero-ctas{ gap:.5rem; flex-direction:column; align-items:stretch }
+  .hero-ctas .btn{ width:100%; justify-content:center }
+}
 
 /* Scroll indicator under hero CTAs: subtle pulsing down arrow */
 .scroll-indicator{ display:inline-flex; align-items:center; justify-content:center; margin: 128px auto 0; width:44px; height:44px; border-radius:999px; background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer; animation: scroll-pulse 1.6s ease-in-out infinite; }

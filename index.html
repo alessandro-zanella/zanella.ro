@@ -20,6 +20,40 @@
       display: grid;
       place-items: center;
       overflow: hidden;
+      padding: 80px 0 40px;
+    }
+    
+    @media (max-width: 768px) {
+      .landing-hero {
+        padding: 100px 20px 40px;
+        min-height: auto;
+      }
+      
+      .landing-logo {
+        margin-bottom: 2rem !important;
+        max-width: 70%;
+      }
+      
+      .landing-title {
+        margin-bottom: 2.5rem !important;
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .landing-hero {
+        padding: 80px 15px 30px;
+      }
+      
+      .landing-logo {
+        max-width: 60%;
+        margin-bottom: 1.5rem !important;
+      }
+      
+      .landing-title {
+        font-size: 1.25rem;
+        margin-bottom: 2rem !important;
+      }
     }
     
     .landing-hero-media {
@@ -71,10 +105,10 @@
     }
     
     .panel-card {
-      background: var(--panel-bg);
+  background: var(--panel-bg);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+  box-shadow: var(--shadow);
       padding: 2.5rem 2rem;
       text-align: center;
       cursor: pointer;
@@ -164,7 +198,7 @@
       border-radius: 14px;
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
+  box-shadow: var(--shadow);
       color: var(--text);
       text-decoration: none;
       transition: transform var(--dur-fast) var(--easing), 
@@ -206,10 +240,30 @@
       .panels-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        padding: 0 15px;
       }
       
       .panel-card {
         padding: 2rem 1.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .panels-grid {
+        gap: 1.25rem;
+        padding: 0 10px;
+      }
+      
+      .panel-card {
+        padding: 1.5rem 1.25rem;
+      }
+      
+      .panel-title {
+        font-size: 1.25rem;
+      }
+      
+      .panel-description {
+        font-size: 0.9rem;
       }
     }
     
@@ -232,48 +286,10 @@
     <div class="landing-hero-media" aria-hidden="true"></div>
     <div class="landing-content">
       <img src="assets/ZANELLA LOGO WHITE.png" alt="Zanella" class="landing-logo" />
-      <h1 class="landing-title">Choose Your Experience</h1>
+      <h1 class="landing-title" id="landingTitle">Choose Your Experience</h1>
       
-      <div class="panels-grid">
-        <div class="panel-card reveal" onclick="window.location.href='lounge.html'">
-           <div class="panel-icon">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-               <path d="M8 21h8"></path>
-               <path d="M12 21v-10"></path>
-               <path d="M6 5l6 6 6-6"></path>
-               <line x1="6" y1="5" x2="18" y2="5"></line>
-             </svg>
-           </div>
-          <h2 class="panel-title">Zanella Lounge</h2>
-          <p class="panel-description">A smart-casual lounge to eat, drink, and socialize in an elegant, modern setting.</p>
-          <a href="lounge.html" class="panel-button">Enter Lounge</a>
-        </div>
-        
-        <div class="panel-card reveal disabled">
-          <div class="panel-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </div>
-          <h2 class="panel-title">Zanella Resort</h2>
-          <p class="panel-description">Coming soon. Experience luxury hospitality and world-class amenities.</p>
-          <span class="panel-button">Coming Soon</span>
-        </div>
-        
-        <div class="panel-card reveal" onclick="window.location.href='events.html'">
-          <div class="panel-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <h2 class="panel-title">Zanella Events</h2>
-          <p class="panel-description">Join us for special evenings and experiences. View upcoming events and book your spot.</p>
-          <a href="events.html" class="panel-button">View Events</a>
-        </div>
+      <div class="panels-grid" id="panelsContainer">
+        <!-- Panels will be populated from JSON -->
       </div>
     </div>
   </section>
@@ -358,14 +374,14 @@
 
     function startParticles(){ 
       if(particlesRunning) return; 
-      resize(); 
+        resize();
       makeParticles(window.innerWidth<640?50:90); 
       if(!prefersReduced){ 
         particlesRunning=true; 
         draw(); 
       } else { 
         ctx.clearRect(0,0,W,H); 
-        for(const p of particles){ 
+          for(const p of particles){
           ctx.beginPath(); 
           ctx.arc(p.x,p.y,p.r,0,Math.PI*2); 
           ctx.fillStyle=p.c; 
@@ -394,8 +410,76 @@
       document.querySelectorAll('.reveal').forEach(el=> io.observe(el)); 
     }
 
+    // Icon mapping for panels
+    const iconMap = {
+      'wine-glass': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 5h12"></path>
+        <path d="M8 5l4 6l4-6"></path>
+        <path d="M12 11v10"></path>
+        <path d="M8 21h8"></path>
+      </svg>`,
+      'calendar': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>`,
+      'house': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>`
+    };
+
+    // Load panels from JSON
+    async function loadPanels() {
+      try {
+        const indexData = await fetch('content/index.json').then(r => r.json());
+        
+        // Update title
+        const titleEl = document.getElementById('landingTitle');
+        if (titleEl && indexData.title) {
+          titleEl.textContent = indexData.title;
+        }
+        
+        // Sort panels by order (1-50, where 1 is first)
+        const sortedPanels = (indexData.panels || []).sort((a, b) => (a.order || 50) - (b.order || 50));
+        
+        // Render panels
+        const container = document.getElementById('panelsContainer');
+        if (container) {
+          container.innerHTML = sortedPanels.map((panel, index) => {
+            const iconSvg = iconMap[panel.icon] || iconMap['house'];
+            const delay = 0.6 + (index * 0.2);
+            const isEnabled = panel.enabled !== false && panel.link;
+            
+            return `
+              <div class="panel-card reveal ${isEnabled ? '' : 'disabled'}" 
+                   ${isEnabled ? `onclick="window.location.href='${panel.link}'"` : ''}
+                   style="animation: fadeInUp 0.8s var(--easing) ${delay}s forwards;">
+                <div class="panel-icon">
+                  ${iconSvg}
+                </div>
+                <h2 class="panel-title">${panel.title}</h2>
+                <p class="panel-description">${panel.description}</p>
+                ${isEnabled 
+                  ? `<a href="${panel.link}" class="panel-button">${panel.buttonText || 'Enter'}</a>`
+                  : `<span class="panel-button">Coming Soon</span>`
+                }
+              </div>
+            `;
+          }).join('');
+          
+          // Re-enable reveal for newly added panels
+          setTimeout(() => enableReveal(), 100);
+        }
+      } catch (error) {
+        console.error('Error loading panels:', error);
+      }
+    }
+
     // Init
-    window.addEventListener('DOMContentLoaded', ()=>{
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      await loadPanels();
       enableReveal();
       startParticles();
     });
