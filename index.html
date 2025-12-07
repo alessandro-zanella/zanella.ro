@@ -105,10 +105,10 @@
     }
     
     .panel-card {
-  background: var(--panel-bg);
+      background: var(--panel-bg);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-  box-shadow: var(--shadow);
+      box-shadow: var(--shadow);
       padding: 2.5rem 2rem;
       text-align: center;
       cursor: pointer;
@@ -116,14 +116,20 @@
                   box-shadow var(--dur-fast) var(--easing),
                   border-color var(--dur-fast) var(--easing);
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(20px);
       position: relative;
       overflow: hidden;
+      visibility: hidden;
+      will-change: opacity, transform;
     }
     
-    .panel-card:nth-child(1) { animation: fadeInUp 0.8s var(--easing) 0.6s forwards; }
-    .panel-card:nth-child(2) { animation: fadeInUp 0.8s var(--easing) 0.8s forwards; }
-    .panel-card:nth-child(3) { animation: fadeInUp 0.8s var(--easing) 1s forwards; }
+    .panel-card.animate {
+      visibility: visible;
+    }
+    
+    .panel-card:nth-child(1) { animation: fadeInUp 0.6s var(--easing) 0.4s forwards; }
+    .panel-card:nth-child(2) { animation: fadeInUp 0.6s var(--easing) 0.5s forwards; }
+    .panel-card:nth-child(3) { animation: fadeInUp 0.6s var(--easing) 0.6s forwards; }
     
     .panel-card::before {
       content: '';
@@ -230,9 +236,15 @@
     }
     
     @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        visibility: hidden;
+      }
       to {
         opacity: 1;
         transform: translateY(0);
+        visibility: visible;
       }
     }
     
@@ -274,6 +286,18 @@
         animation: none;
         opacity: 1;
         transform: none;
+        visibility: visible;
+      }
+    }
+    
+    /* Prevent layout shift - reserve space for panels */
+    .panels-grid {
+      min-height: 400px;
+    }
+    
+    @media (max-width: 768px) {
+      .panels-grid {
+        min-height: 300px;
       }
     }
   </style>
@@ -288,7 +312,7 @@
       <img src="assets/ZANELLA LOGO WHITE.png" alt="Zanella" class="landing-logo" />
       <h1 class="landing-title" id="landingTitle">Choose Your Experience</h1>
       
-      <div class="panels-grid" id="panelsContainer">
+      <div class="panels-grid" id="panelsContainer" style="opacity: 0;">
         <!-- Panels will be populated from JSON -->
       </div>
     </div>
@@ -449,13 +473,11 @@
         if (container) {
           container.innerHTML = sortedPanels.map((panel, index) => {
             const iconSvg = iconMap[panel.icon] || iconMap['house'];
-            const delay = 0.6 + (index * 0.2);
             const isEnabled = panel.enabled !== false && panel.link;
             
             return `
-              <div class="panel-card reveal ${isEnabled ? '' : 'disabled'}" 
-                   ${isEnabled ? `onclick="window.location.href='${panel.link}'"` : ''}
-                   style="animation: fadeInUp 0.8s var(--easing) ${delay}s forwards;">
+              <div class="panel-card reveal animate ${isEnabled ? '' : 'disabled'}" 
+                   ${isEnabled ? `onclick="window.location.href='${panel.link}'"` : ''}>
                 <div class="panel-icon">
                   ${iconSvg}
                 </div>
@@ -469,8 +491,13 @@
             `;
           }).join('');
           
-          // Re-enable reveal for newly added panels
-          setTimeout(() => enableReveal(), 100);
+          // Show container and trigger animations
+          requestAnimationFrame(() => {
+            container.style.opacity = '1';
+            container.style.transition = 'opacity 0.3s ease';
+            // Re-enable reveal for newly added panels
+            setTimeout(() => enableReveal(), 50);
+          });
         }
       } catch (error) {
         console.error('Error loading panels:', error);

@@ -410,28 +410,44 @@
         : '';
       
       // Build offers HTML (up to 3 offers) - compact, each in own panel
-      const offersHtml = event.offers && event.offers.length > 0
-        ? `
-          <div class="event-offers">
-            <h3 style="margin:0 0 1rem; font-size:1.2rem; color:var(--text);">Available Offers</h3>
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              ${event.offers.slice(0, 3).map(offer => `
-                <div class="card" style="padding:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
-                  <div style="flex:1; min-width:200px;">
-                    <h4 style="margin:0 0 4px; font-size:1rem; font-weight:600; color:var(--text);">${offer.name}</h4>
-                    <p style="margin:0 0 6px; font-size:0.9rem; color:var(--muted); line-height:1.4;">${offer.description}</p>
-                    <p style="margin:0; font-size:1rem; font-weight:700; color:var(--accent-2);">${offer.price}</p>
-                  </div>
-                  ${offer.paymentLink ? `
-                    <div style="flex-shrink:0;">
-                      <a href="${offer.paymentLink}" class="btn btn-gold" target="_blank" rel="noopener" style="white-space:nowrap;">Buy Now</a>
-                    </div>
-                  ` : ''}
+      const offersHtml = event.offers && Array.isArray(event.offers) && event.offers.length > 0
+        ? (() => {
+            // Filter out invalid offers and take up to 3
+            const validOffers = event.offers
+              .filter(offer => offer && (offer.name || offer.title))
+              .slice(0, 3);
+            
+            if (validOffers.length === 0) return '';
+            
+            return `
+              <div class="event-offers">
+                <h3 style="margin:0 0 1rem; font-size:1.2rem; color:var(--text);">Available Offers</h3>
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${validOffers.map(offer => {
+                    const name = offer.name || offer.title || '';
+                    const description = offer.description || '';
+                    const price = offer.price || '';
+                    const paymentLink = offer.paymentLink || offer.href || '';
+                    
+                    return `
+                      <div class="card" style="padding:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:200px;">
+                          ${name ? `<h4 style="margin:0 0 4px; font-size:1rem; font-weight:600; color:var(--text);">${name}</h4>` : ''}
+                          ${description ? `<p style="margin:0 0 6px; font-size:0.9rem; color:var(--muted); line-height:1.4;">${description}</p>` : ''}
+                          ${price ? `<p style="margin:0; font-size:1rem; font-weight:700; color:var(--accent-2);">${price}</p>` : ''}
+                        </div>
+                        ${paymentLink ? `
+                          <div style="flex-shrink:0;">
+                            <a href="${paymentLink}" class="btn btn-gold" target="_blank" rel="noopener" style="white-space:nowrap;">Buy Now</a>
+                          </div>
+                        ` : ''}
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
-              `).join('')}
-            </div>
-          </div>
-        `
+              </div>
+            `;
+          })()
         : '';
       
       // Get contact info HTML
