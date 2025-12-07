@@ -133,8 +133,8 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
   .hero{ min-height: calc( (var(--vh, 1vh) * 100) - 52px ); padding-top:15px }
   .hero-content{ padding:0 12px }
   .hero-logo{ max-width:60% !important; margin-bottom:.75rem !important }
-  .hero-ctas{ gap:.5rem; flex-direction:column; align-items:stretch }
-  .hero-ctas .btn{ width:100%; justify-content:center }
+  .hero-ctas{ gap:.6rem; flex-direction:column; align-items:center }
+  .hero-ctas .btn{ width:100%; max-width:280px; padding:.75rem 1rem; justify-content:center }
 }
 
 /* Scroll indicator under hero CTAs: subtle pulsing down arrow */

@@ -17,8 +17,17 @@
   <div class="ambient" aria-hidden="true"></div>
   <canvas id="particles" aria-hidden="true"></canvas>
 
+  <!-- Logo header to go back to index -->
+  <div class="logo-header" style="position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(10px); background:rgba(23,27,31,.6); border-bottom:1px solid var(--line);">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand" aria-label="Back to Home">
+        <img src="assets/ZANELLA%20LOGO%20WHITE.png" alt="Zanella" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">
+      </a>
+    </div>
+  </div>
+
   <!-- Upcoming Events List -->
-  <section id="events-list" class="section" style="padding-top:80px;">
+  <section id="events-list" class="section" style="padding-top:60px;">
     <div class="container">
       <div class="reveal">
         <h2 style="margin-bottom:1rem;">Upcoming Events</h2>
@@ -31,12 +40,22 @@
   </section>
   
   <style>
+    /* Logo header responsive styles */
     @media(max-width:768px){
-      #events-list{ padding-top:100px !important }
+      .logo-header .brand img{ height:24px !important; padding-right:20px !important }
+      .logo-header .nav-inner{ height:56px; padding:0 15px }
+    }
+    @media(max-width:480px){
+      .logo-header .brand img{ height:20px !important; padding-right:15px !important }
+      .logo-header .nav-inner{ height:52px; padding:0 12px }
+    }
+    
+    @media(max-width:768px){
+      #events-list{ padding-top:50px !important }
       #eventsListContainer{ grid-template-columns:1fr !important; gap:1.5rem !important }
     }
     @media(max-width:480px){
-      #events-list{ padding-top:80px !important }
+      #events-list{ padding-top:40px !important }
       #eventsListContainer{ gap:1.25rem !important }
       #events-list h2{ font-size:1.5rem }
       #events-list .card{ padding:1.5rem 1.25rem !important }
