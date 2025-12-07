@@ -1,0 +1,47 @@
+{
+  "title": "Contact",
+  "description": [
+    "Questions about private bookings or upcoming events? Drop us a note.",
+    "Prefer to reach us directly? Call or email — we'll get back shortly."
+  ],
+  "contactInfo": {
+    "phone": {
+      "number": "+40770388369",
+      "href": "tel:+40770388369",
+      "ariaLabel": "Call Zanella Lounge",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M22 16.92v3.08a1 1 0 0 1-1.08 1A19 19 0 0 1 3.08 3.08 1 1 0 0 1 4.08 2h3.08a1 1 0 0 1 1 .75c.12.5.32 1.02.6 1.5l-.9.9a1 1 0 0 0-.22 1.11 12.36 12.36 0 0 0 5.23 5.23 1 1 0 0 0 1.11-.22l.9-.9c.48.28 1 .48 1.5.6a1 1 0 0 1 .75 1V16.92z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "class": "btn btn-green"
+    },
+    "email": {
+      "address": "zan15592@gmail.com",
+      "href": "mailto:hello@zanellalounge.example",
+      "ariaLabel": "Email Zanella Lounge",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M3 8.2v7.6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.2\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M21 6H3v2.2l9 6 9-6V6z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "class": "btn"
+    }
+  },
+  "social": [
+    {
+      "platform": "Instagram",
+      "url": "https://www.instagram.com/zanella_lounge/",
+      "ariaLabel": "Instagram",
+      "class": "btn btn-ghost",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M17.8 6.2h.01\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/></svg>"
+    },
+    {
+      "platform": "Facebook",
+      "url": "https://www.facebook.com/profile.php?id=61580371774552",
+      "ariaLabel": "Facebook",
+      "class": "btn btn-ghost",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v7h4v-7h3l1-4h-4V6a1 1 0 0 1 1-1h3z\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+    }
+  ],
+  "visit": {
+    "title": "Visit",
+    "address": "Strada Ciocarliei 15, Cluj‑Napoca",
+    "location": "Hotel Casa Alesiv - Franchise Partners",
+    "hours": "Open Tue–Sun · 17:00–01:00",
+    "mapImage": "https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop"
+  }
+}
+

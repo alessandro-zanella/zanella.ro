@@ -1,0 +1,48 @@
+{
+  "logo": {
+    "src": "assets/Zanella Lounge Logo White.png",
+    "alt": "Zanella Lounge",
+    "width": "640px",
+    "maxWidth": "80%"
+  },
+  "ctas": [
+    {
+      "text": "About",
+      "href": "#about",
+      "class": "btn btn-ghost"
+    },
+    {
+      "text": "Menu",
+      "href": "#menuSection",
+      "class": "btn btn-ghost"
+    },
+    {
+      "text": "Contact",
+      "href": "#contact",
+      "class": "btn btn-ghost"
+    }
+  ],
+  "scrollIndicator": {
+    "enabled": true,
+    "href": "#about",
+    "ariaLabel": "Scroll to About"
+  },
+  "slides": [
+    {
+      "title": "ZANELLA Lounge",
+      "sub": "Warm & Cozy Atmosphere and an intimate experience",
+      "image": "assets/zanella_image_1.jpg"
+    },
+    {
+      "title": "Elevated Social. Effortless Vibe.",
+      "sub": "Concrete, wood, plants, and light — built for connection.",
+      "image": "assets/zanella_image_2.jpg"
+    },
+    {
+      "title": "Smart Casual & Professional Setting",
+      "sub": "Refined space. Smart-casual nights. Your table, your people.",
+      "image": "assets/zanella_image_3.jpg"
+    }
+  ]
+}
+

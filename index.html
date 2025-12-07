@@ -11,370 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="/manifest.json">
-
-  <!-- Inlined stylesheet (was assets/styles.css) -->
-  <style>
-/* ZANELLA LOUNGE — THEME */
-:root{
-  --bg:#171b1f; --bg-elev:#21262c; --text:#f2f4f6; --muted:#b5bcc3;
-  /* panel background with 90% opacity so underlying image peeks through */
-  --panel-bg: rgba(33,38,44,.8);
-  --accent:#87a77a; --accent-2:#c39a6b; --accent-3:#5fb38c; --line:#2f353b;
-  --max:1120px; --radius:20px; --shadow:0 10px 30px rgba(0,0,0,.3);
-  --dur-fast:.25s; --dur-med:.6s; --easing:cubic-bezier(.16,1,.3,1);
-  /* fallback for older browsers */
-  --vh: 1vh;
-}
-/* Hide scrollbars but allow scrolling */
-html{ scrollbar-width:none; -ms-overflow-style:none; }
-body::-webkit-scrollbar{ display:none; width:0; height:0; }
-*, *::before, *::after { box-sizing: border-box; }
-html { height:100%; }
-body{ margin:0; min-height:100vh; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
-  color:var(--text); background:var(--bg); line-height:1.6; letter-spacing:.2px; overflow-x:hidden; }
-img{max-width:100%; display:block;} a{color:inherit; text-decoration:none}
-.container{width:100%; max-width:var(--max); margin-inline:auto; padding:0 20px}
-
-.section{padding:64px 0} @media(min-width:768px){ .section{padding:96px 0} }
-
-/* Reduce gap specifically between About and Contact */
-#about{ padding-bottom:36px; }
-#contact{ padding-top:36px; }
-@media(min-width:768px){
-  #about{ padding-bottom:56px; }
-  #contact{ padding-top:56px; }
-}
-
-/* Ambient background + grain */
-.ambient{ position:fixed; inset:-20%; z-index:-3; pointer-events:none; filter:blur(40px) saturate(108%); opacity:.85; background:
-  radial-gradient(70rem 60rem at 20% 20%, rgba(195,154,107,.16), transparent 60%),
-  radial-gradient(80rem 60rem at 80% 80%, rgba(135,167,122,.18), transparent 60%),
-  radial-gradient(60rem 50rem at 50% -10%, rgba(255,255,255,.06), transparent 60%);
-  animation: drift 28s var(--easing) infinite alternate; }
-body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:-2; background: repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 6px); opacity:.35; animation: grain 12s linear infinite; mix-blend-mode: soft-light; }
-@keyframes drift{ 0%{ transform: translate3d(0,0,0) scale(1);} 100%{ transform: translate3d(-3%,2%,0) scale(1.08);} }
-@keyframes grain{ 0%{ transform:translate(0,0)} 100%{ transform:translate(-24px,12px)} }
-
-/* Particle canvas behind content */
-#particles{ position:fixed; inset:0; z-index:-1; display:block; }
-
-/* UI */
-.chip{display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .8rem; background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:999px; color:var(--muted)}
-.chip--green{ border-color: color-mix(in oklab, var(--accent-3) 60%, var(--line)); color: color-mix(in oklab, var(--accent-3) 75%, var(--muted)); background: rgba(95,179,140,.08); }
-.btn{display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:.9rem 1.2rem; border-radius:14px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); box-shadow:var(--shadow); transition:transform var(--dur-fast) var(--easing), background var(--dur-fast) var(--easing), border-color var(--dur-fast) var(--easing)}
-.btn:hover{ transform:translateY(-2px); border-color:rgba(195,154,107,.6); }
-.btn-primary{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 88%, white 8%), color-mix(in oklab, var(--accent-2) 64%, black 0%)); color:#1b1b1b; border-color:rgba(195,154,107,1)}
-.btn-primary:hover{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 96%, white 4%), color-mix(in oklab, var(--accent-2) 75%, black 0%));}
-.btn-green{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-3) 100%, white 6%), color-mix(in oklab, var(--accent-3) 80%, black 0%)); color:#0f1512; border-color: color-mix(in oklab, var(--accent-3) 90%, black 10%); }
-.btn-gold{ background:linear-gradient(180deg, color-mix(in oklab, var(--accent-2) 100%, white 6%), color-mix(in oklab, var(--accent-2) 80%, black 0%)); color:#1b1b1b; border-color: color-mix(in oklab, var(--accent-2) 90%, black 10%); }
-.btn-ghost{ background:rgba(255,255,255,.10); color:var(--text) }
-
-.card{background:var(--panel-bg); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
-.grid{display:grid; gap:20px}
-@media(min-width:768px){ .grid-2{grid-template-columns:repeat(2, minmax(0,1fr));} }
-
-/* Sticky Nav */
-.nav{ position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(10px); background:rgba(23,27,31,.6); border-bottom:1px solid var(--line) }
-.nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px }
-.brand{ display:flex; align-items:center; gap:.75rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase }
-.brand-mark{ width:28px; height:28px; border-radius:8px; background: conic-gradient(from 180deg, var(--accent-2), var(--accent), var(--accent-2)); box-shadow:0 0 0 2px rgba(0,0,0,.35) inset }
-.nav a{ color:var(--muted); font-size:.95rem } .nav a:hover{ color:var(--text) }
-.nav-links{ display:flex; gap:1rem }
-
-.hero{
-  position:relative;
-  /* make hero fill the viewport minus the sticky nav (64px) so overlay covers full screen on load */
-  min-height: calc( (var(--vh, 1vh) * 100) - 64px );
-  display:grid; place-items:center; overflow:hidden;
-}
-.hero-media{
-  position:absolute; inset:0; pointer-events:none;
-  /* Force GPU compositing to avoid scroll jitter on mobile */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-}
-/* single hero slide with a subtle, looping pan & gentle scale */
-.slide{
-  position:absolute; inset:0; opacity:1; transform:none;
-  background-size:cover; background-position:center;
-  filter: saturate(.95) contrast(.96) brightness(.92);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-  /* animate a slow, subtle pan + micro-zoom to give life without swapping slides */
-  animation: hero-pan 20s ease-in-out infinite alternate;
-}
-@keyframes hero-pan{
-  0%   { transform: scale(1.02) translate3d(-3%, -2%, 0); }
-  50%  { transform: scale(1.04) translate3d(0%, 0%, 0); }
-  100% { transform: scale(1.02) translate3d(3%, 2%, 0); }
-}
-.hero-overlay{ position:absolute; inset:0; background: radial-gradient(60rem 40rem at 50% 0%, rgba(0,0,0,.22), rgba(0,0,0,.55)), linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.72) 100%) }
-.hero-content{ position:relative; text-align:center; padding: 0 20px; }
-.hero h1{ font-size: clamp(2rem, 5vw, 3.6rem); line-height:1.1; margin:0 0 .8rem; }
-.hero h1 .accent{ color: var(--accent-3); text-shadow: 0 0 18px rgba(95,179,140,.25); }
-.hero p{ color:var(--muted); margin:.5rem auto 1.2rem; max-width:36rem }
-.hero-ctas{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap }
-
-/* Scroll indicator under hero CTAs: subtle pulsing down arrow */
-.scroll-indicator{ display:inline-flex; align-items:center; justify-content:center; margin: 128px auto 0; width:44px; height:44px; border-radius:999px; background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer; animation: scroll-pulse 1.6s ease-in-out infinite; }
-.scroll-indicator svg{ width:32px; height:32px; display:block }
-@keyframes scroll-pulse{ 0%{ transform: translateY(0); opacity:.8 } 50%{ transform: translateY(8px); opacity:.4 } 100%{ transform: translateY(0); opacity:.8 } }
-@media (prefers-reduced-motion: reduce){ .scroll-indicator{ animation:none } }
-
-/* Tickets */
-.tickets{ position:relative } .tickets .card{ overflow:hidden }
-.woodbar{ height:8px; background: linear-gradient(90deg, #a77d48, #c39a6b, #a77d48); opacity:.9 }
-.ticket-body{ padding:24px }
-.ticket-title{ font-size: clamp(1.25rem, 3.4vw, 1.6rem); margin:0 0 .5rem }
-.ticket-sub{ color:var(--muted); margin:0 0 1rem }
-.ticket-actions{ display:flex; gap:.6rem; flex-wrap:wrap }
-.inline-note{ font-size:.85rem; color:var(--muted) }
-
-/* About */
-.about .features{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem }
-.about p{ margin: .5rem 0 0; color:var(--muted)}
-
-/* Contact */
-form{ display:grid; gap:.8rem }
-.field{ display:grid; gap:.4rem }
-label{ font-size:.95rem; color:var(--muted) }
-input, textarea{ width:100%; padding: .9rem 1rem; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text); outline:none; transition:border var(--dur-fast) var(--easing) }
-input:focus, textarea:focus{ border-color: var(--accent-2) }
-textarea{ min-height:120px; resize:vertical }
-
-/* Footer */
-footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
-
-/* Reveal */
-.reveal{ opacity:0; transform: translateY(14px); transition: opacity var(--dur-med) var(--easing), transform var(--dur-med) var(--easing) }
-.reveal.visible{ opacity:1; transform:none }
-
-/* Pricing alignment — tabular numbers + fixed price column for consistent alignment */
-.pricing-list { display:grid; gap:.6rem; margin-top:.6rem; }
-.pricing-row{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:.6rem; border-radius:10px; background:rgba(255,255,255,.02); border:1px solid var(--line);
-}
-.pricing-row .meta{ font-size:.95rem; color:var(--muted); max-width:70%; }
-.pricing-row .price{
-  display:flex;
-  align-items:baseline;
-  justify-content:flex-end;
-  gap:.4rem;
-  min-width:90px; text-align:right;
-  /* ensures digits use fixed-width figures so alignment stays consistent */
-  font-variant-numeric: tabular-nums;
-  white-space:nowrap; /* keep currency on the same line */
-}
-
-.pricing-row .price .amount{
-  font-size: .92rem; /* slightly smaller than meta (.95rem) */
-  font-weight:700;
-  letter-spacing:.2px;
-}
-.pricing-row .price .currency{
-  font-size: .72rem; /* small currency label */
-  color: var(--muted);
-  opacity:.95;
-  margin-left:.06rem;
-}
-
-@media (prefers-reduced-motion: reduce){ .slide, .reveal, .btn{ transition:none } .ambient, body::before{ animation:none } }
-
-/* Embedded menu animation (used by #embeddedMenu) */
-#embedded-menu-wrapper{ overflow:visible; }
-#embeddedMenu{ max-height:0; opacity:0; transform:translateY(-6px); transition: max-height .45s var(--easing), opacity .36s var(--easing), transform .36s var(--easing); }
-#embeddedMenu.open{ max-height: none; opacity:1; transform:translateY(0); overflow:visible; padding-bottom:24px; }
-#embeddedMenu .pricing-list{ margin-top:.6rem }
-@media (prefers-reduced-motion: reduce){ #embeddedMenu, #embeddedMenu.open{ transition:none; transform:none; } }
-
-/* Generic embedded panel (used by menu, pricing, etc.) */
-.embedded-panel{ max-height:0; opacity:0; transform:translateY(-6px); transition: max-height .5s var(--easing), opacity .36s var(--easing), transform .36s var(--easing); overflow:hidden; }
-.embedded-panel.open{ max-height:1200px; opacity:1; transform:translateY(0); }
-@media (prefers-reduced-motion: reduce){ .embedded-panel, .embedded-panel.open{ transition:none; transform:none; } }
-
-/* Full-bleed Menu Section with background image */
-#menuSection{ position:relative; padding:72px 0; }
-#menuSection::before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(23,27,31,.36), rgba(23,27,31,.6)); z-index:0; }
-#menuSection .container{ position:relative; z-index:1; }
-
-#embeddedMenu.card{ background: var(--panel-bg); border:1px solid var(--line); box-shadow: var(--shadow); border-radius:14px; max-width:var(--max); margin:14px auto 0; }
-#embeddedMenu.card h3{ color:var(--text); }
-
-/* Make the embedded menu more prominent on small screens - reduce side margin to sit closer to screen */
-@media(max-width:640px){
-  #menuSection{ padding:48px 0; }
-  /* tighter margins/padding so panel sits near the screen edge on mobile */
-  #embeddedMenu.card{ margin:8px 8px 0; padding:12px; border-radius:12px; }
-}
-
-/* Contact section full-bleed + panel styling (matches menu look) */
-#contact{ position:relative; background-image: url('../assets/zanella_image_2.jpg'); background-size:cover; background-position:center; padding:72px 0; }
-#contact::before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(23,27,31,.28), rgba(23,27,31,.6)); z-index:0; }
-#contact .container{ position:relative; z-index:1; }
-
-#contact .card{ background: var(--panel-bg); border:1px solid var(--line); box-shadow: var(--shadow); border-radius:14px; }
-#contact .card h3{ color:var(--text); }
-
-@media(max-width:640px){ #contact{ padding:48px 0 } #contact .card{ padding:14px } }
-
-/* Reusable dark background panel for text over photo backgrounds */
-.bg-panel{
-  display:inline-block;
-  background: var(--panel-bg);
-  padding:12px 16px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  box-shadow: var(--shadow);
-  color:var(--text);
-  max-width:100%;
-}
-.bg-panel h2, .bg-panel h3, .bg-panel p{ margin:0; }
-
-@media(min-width:768px){
-  /* on wider screens make the panel a block with limited width */
-  .bg-panel{ display:block; max-width:720px; }
-}
-
-/* Menu page tweaks */
-.menu-page .hero-media{ background-position:center top; filter: saturate(.95) contrast(.94) brightness(.86); }
-.menu-page .hero-content h1{ font-size: clamp(2.2rem, 6vw, 3.2rem); margin-bottom:.25rem; }
-.menu-page h2{ font-size:1.15rem; margin:0 0 .6rem; border-bottom:1px solid rgba(255,255,255,.03); padding-bottom:.6rem; }
-
-.menu-page .pricing-list{ gap:.5rem }
-.menu-page .pricing-row{
-  display:flex; align-items:flex-start; gap:16px;
-  padding:.8rem 1rem; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-  border:1px solid rgba(255,255,255,.03);
-}
-.menu-page .pricing-row .meta{ max-width:78%; }
-.menu-page .pricing-row .meta strong{ display:block; font-size:1.02rem; margin-bottom:4px; }
-.menu-page .pricing-row .meta div{ color:var(--muted); font-size:.92rem; margin-top:0; }
-
-.menu-page .price{
-  min-width:96px; text-align:right; font-weight:700; font-size:1rem;
-  font-variant-numeric: tabular-nums; white-space:nowrap;
-  color:var(--text);
-}
-
-/* add subtle separators for dense lists */
-.menu-page .pricing-row + .pricing-row{ border-top:1px solid rgba(255,255,255,.02) }
-
-/* narrow viewport tweaks */
-@media(max-width:640px){
-  .menu-page .pricing-row{ flex-direction:row; align-items:center; gap:12px; padding:.7rem; }
-  .menu-page .pricing-row .meta{ max-width:64%; }
-  .menu-page .price{ min-width:72px; font-size:.98rem }
-}
-
-/* Collapsible site menu panel (embedded menu) */
-.menu-panel{
-  position:fixed;
-  inset:64px 0 0 0; /* below sticky nav */
-  z-index:60;
-  max-height:0;
-  overflow:hidden;
-  background:transparent;
-  transition: max-height .42s var(--easing), background .28s var(--easing);
-  -webkit-overflow-scrolling: touch;
-}
-.menu-panel.open{
-  max-height:100vh;
-  background: linear-gradient(to bottom, rgba(23,27,31,.96), rgba(23,27,31,.98));
-}
-.menu-panel-inner{
-  padding:28px 0 48px;
-  background:transparent;
-}
-.menu-panel .container{ max-width:var(--max); padding:0 20px; }
-.menu-panel .panel-card{
-  background:var(--bg-elev);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:18px;
-  box-shadow: var(--shadow);
-}
-.menu-panel .panel-ctas{ display:flex; gap:.6rem; margin-bottom:12px; flex-wrap:wrap; }
-.menu-panel .menu-grid{ display:grid; gap:20px }
-@media(min-width:768px){ .menu-panel .menu-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-
-/* prevent background scroll when open */
-body.menu-open{ overflow:hidden; position:fixed; width:100%; }
-
-/* small helper for close button placement */
-.menu-panel-close{ display:flex; justify-content:flex-end; margin-bottom:8px; }
-
-/* Respect reduced-motion */
-@media (prefers-reduced-motion: reduce){
-  .menu-panel, .menu-panel.open { transition: none; }
-}
-
-/* Premium / Exclusive highlight styling */
-:root{ --gold:#c39a6b; --gold-strong: #bd8f4f }
-.premium-panel{ background: linear-gradient(180deg, rgba(195,154,107,.20), rgba(195,154,107,.12)); border:1px solid rgba(195,154,107,.34); color: #fff; padding:14px; border-radius:12px; }
-.premium-panel{ position:relative; overflow:visible; background: linear-gradient(180deg, rgba(195,154,107,.20), rgba(195,154,107,.12)); border:1px solid rgba(195,154,107,.34); color: #fff; padding:14px; border-radius:12px; }
-.premium-panel > :not(.premium-canvas){ position:relative; z-index:1; }
-.premium-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px; background: linear-gradient(90deg, rgba(195,154,107,.12), rgba(195,154,107,.06)); border:1px solid rgba(195,154,107,.12); }
-.premium-row .meta{ color: #fff; font-weight:600 }
-.premium-row .price{ color:#fff; font-weight:800 }
-.premium-row .price{ display:flex; align-items:baseline; gap:.4rem; white-space:nowrap }
-.premium-row .price .amount{ font-size: .98rem; font-weight:800 }
-.premium-row .price .currency{ font-size:.72rem; color: rgba(255,255,255,.85); margin-left:.06rem }
-.premium-note{ font-size:.92rem; color: rgba(255,255,255,.9); margin-top:.35rem }
-
-/* spacing between premium rows */
-.premium-row + .premium-row{ margin-top:1rem }
-
-/* canvas overlay for premium particle animation */
-.premium-canvas{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; opacity:1 }
-
-/* Three visual variants for pricing rows: gold (opaque gold), silver (opaque silver), gray (minimal) */
-.gold-row{
-  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
-  position:relative; overflow:hidden; /* allow canvas overlay */
-  background: linear-gradient(90deg, rgba(195,154,107,.5), rgba(195,154,107,.45)); border:1px solid rgba(189,143,79,.6);
-}
-.gold-row .meta{ color:#fff; font-weight:700 }
-.gold-row .price{ color:#fff; font-weight:900 }
-
-.silver-row{
-  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
-  position:relative; overflow:hidden; /* allow canvas overlay */
-  background: linear-gradient(90deg, rgba(230,230,230,.5), rgba(210,210,210,.45)); border:1px solid rgba(200,200,200,.6);
-}
-.silver-row .meta{ color:#fff; font-weight:700 }
-.silver-row .price{ color:#fff; font-weight:800 }
-
-.price-category{ 
-  font-size:1rem; 
-  color:rgba(255,255,255,.85); 
-  margin:.6rem; 
-  margin-top: 2rem;
-  font-weight:400; }
-
-.gray-row{
-  margin-left: .6rem;
-  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.5rem 0; border-radius:6px;
-  background: transparent; border:none;
-}
-.gray-row .meta{ color:var(--muted); font-weight:500 }
-.gray-row .price{ color:var(--muted); font-weight:600 }
-
-/* per-row overlay canvas for subtle particles */
-.row-canvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; }
-.gold-row > *:not(.row-canvas), .silver-row > *:not(.row-canvas) { position:relative; z-index:1; }
-
-  </style>
-</head>
-<body>
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
   <div class="ambient" aria-hidden="true"></div>
@@ -656,6 +293,192 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
   </footer>
 
   <script>
+    // Content Loader — Load JSON files and populate content
+    window.contentLoaded = (async function loadContent() {
+      try {
+        // Load all JSON files in parallel
+        const [navData, heroData, aboutData, menuData, eventsData, contactData, footerData] = await Promise.all([
+          fetch('content/nav.json').then(r => r.json()),
+          fetch('content/hero.json').then(r => r.json()),
+          fetch('content/about.json').then(r => r.json()),
+          fetch('content/menu.json').then(r => r.json()),
+          fetch('content/events.json').then(r => r.json()),
+          fetch('content/contact.json').then(r => r.json()),
+          fetch('content/footer.json').then(r => r.json())
+        ]);
+
+        // Populate Navigation
+        const navBrand = document.querySelector('.nav .brand');
+        if (navBrand && navData.brand) {
+          navBrand.href = navData.brand.href;
+          navBrand.innerHTML = `<img src="${navData.brand.logo}" alt="${navData.brand.alt}" style="padding:5px; padding-right:40px; height:28px; display:block; object-fit:contain;">`;
+        }
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks && navData.links) {
+          navLinks.innerHTML = navData.links.map(link => `<a href="${link.href}">${link.text}</a>`).join('');
+        }
+        const navSocial = document.querySelector('.nav-social');
+        if (navSocial && navData.social) {
+          navSocial.innerHTML = navData.social.map(s => `<a href="${s.url}" aria-label="${s.ariaLabel}" target="_blank" rel="noopener" style="color:var(--muted); display:inline-flex; align-items:center;">${s.icon}</a>`).join('');
+        }
+
+        // Populate Hero
+        const heroLogo = document.querySelector('.hero-logo');
+        if (heroLogo && heroData.logo) {
+          heroLogo.src = heroData.logo.src;
+          heroLogo.alt = heroData.logo.alt;
+          heroLogo.style.width = heroData.logo.width;
+          heroLogo.style.maxWidth = heroData.logo.maxWidth;
+        }
+        const heroCtas = document.querySelector('.hero-ctas');
+        if (heroCtas && heroData.ctas) {
+          heroCtas.innerHTML = heroData.ctas.map(cta => `<a class="${cta.class}" href="${cta.href}">${cta.text}</a>`).join('');
+        }
+
+        // Populate About
+        const aboutTitle = document.querySelector('#about h2');
+        if (aboutTitle && aboutData.title) aboutTitle.textContent = aboutData.title;
+        const aboutDesc = document.querySelector('#about .reveal p');
+        if (aboutDesc && aboutData.description) aboutDesc.innerHTML = aboutData.description;
+        const aboutFeatures = document.querySelector('#about .features');
+        if (aboutFeatures && aboutData.features) {
+          aboutFeatures.innerHTML = aboutData.features.map(f => `<span class="${f.class}">${f.icon} ${f.text}</span>`).join('');
+        }
+
+        // Populate Menu
+        const menuTitle = document.querySelector('#menuSection .bg-panel h2');
+        if (menuTitle && menuData.title) menuTitle.textContent = menuData.title;
+        const menuDesc = document.querySelector('#menuSection .bg-panel .inline-note');
+        if (menuDesc && menuData.description) menuDesc.textContent = menuData.description;
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        if (menuToggleBtn && menuData.toggleButton) {
+          menuToggleBtn.textContent = menuData.toggleButton.text;
+          menuToggleBtn.className = menuData.toggleButton.class;
+          window.MENU_BUTTON_TEXTS = {
+            show: menuData.toggleButton.text,
+            hide: menuData.toggleButton.textHide
+          };
+        }
+        const menuList = document.querySelector('#embeddedMenu .pricing-list');
+        if (menuList && menuData.categories) {
+          menuList.innerHTML = menuData.categories.map(cat => {
+            let html = `<h4 class="price-category">${cat.name}</h4>`;
+            html += cat.items.map(item => {
+              let metaHtml = item.name;
+              if (item.description) metaHtml += ` <div style="font-size:.9rem; color:rgba(255,255,255,.9)">${item.description}</div>`;
+              return `<div class="${item.class}"><div class="meta">${metaHtml}</div><div class="price"><span class="amount">${item.price}</span><span class="currency">${item.currency}</span></div></div>`;
+            }).join('');
+            return html;
+          }).join('');
+        }
+
+        // Populate Events
+        const eventsTitle = document.querySelector('#events h2');
+        if (eventsTitle && eventsData.title) eventsTitle.textContent = eventsData.title;
+        const eventsDesc = document.querySelector('#events .reveal p');
+        if (eventsDesc && eventsData.description) eventsDesc.textContent = eventsData.description;
+        const eventsFeatures = document.querySelector('#events .reveal ul');
+        if (eventsFeatures && eventsData.features) {
+          eventsFeatures.innerHTML = eventsData.features.map(f => `<li class="${f.class}">${f.text}</li>`).join('');
+        }
+        const eventsNote = document.querySelector('#events .inline-note');
+        if (eventsNote && eventsData.note) eventsNote.textContent = eventsData.note;
+        const eventsCtas = document.querySelector('#events .reveal > div:last-child');
+        if (eventsCtas && eventsData.ctas) {
+          eventsCtas.innerHTML = eventsData.ctas.map(cta => `<a class="${cta.class}" href="${cta.href}">${cta.text}</a>`).join('');
+        }
+        const pricingTitle = document.querySelector('#events h3');
+        if (pricingTitle && eventsData.pricing) pricingTitle.textContent = eventsData.pricing.title;
+        const pricingDesc = document.querySelector('#events .card .inline-note');
+        if (pricingDesc && eventsData.pricing) pricingDesc.textContent = eventsData.pricing.description;
+        const pricingToggleBtn = document.getElementById('pricingToggleBtn');
+        if (pricingToggleBtn && eventsData.pricing.toggleButton) {
+          pricingToggleBtn.textContent = eventsData.pricing.toggleButton.text;
+          window.PRICING_BUTTON_TEXTS = {
+            show: eventsData.pricing.toggleButton.text,
+            hide: eventsData.pricing.toggleButton.textHide
+          };
+        }
+        const pricingList = document.querySelector('#embeddedPricing .pricing-list');
+        if (pricingList && eventsData.pricing.packages) {
+          pricingList.innerHTML = eventsData.pricing.packages.map(pkg => 
+            `<div class="pricing-row">
+              <div class="meta">
+                <strong>${pkg.name}</strong>
+                <div style="font-size:.9rem; color:var(--muted)">${pkg.description}</div>
+              </div>
+              <div class="price">${pkg.price}</div>
+            </div>`
+          ).join('');
+        }
+        const pricingExtras = document.querySelector('#events .card .inline-note:last-of-type');
+        if (pricingExtras && eventsData.pricing.extrasNote) pricingExtras.textContent = eventsData.pricing.extrasNote;
+
+        // Populate Contact
+        const contactTitle = document.querySelector('#contact .bg-panel h2');
+        if (contactTitle && contactData.title) contactTitle.textContent = contactData.title;
+        const contactDescs = document.querySelectorAll('#contact .bg-panel .inline-note');
+        if (contactDescs.length && contactData.description) {
+          contactDescs.forEach((desc, i) => {
+            if (contactData.description[i]) desc.textContent = contactData.description[i];
+          });
+        }
+        const contactInfo = document.getElementById('contactInfo');
+        if (contactInfo && contactData.contactInfo) {
+          const phoneBtn = contactInfo.querySelector('.btn-green');
+          if (phoneBtn && contactData.contactInfo.phone) {
+            phoneBtn.href = contactData.contactInfo.phone.href;
+            phoneBtn.innerHTML = `${contactData.contactInfo.phone.icon} ${contactData.contactInfo.phone.number}`;
+          }
+          const emailBtn = contactInfo.querySelector('.btn:not(.btn-green)');
+          if (emailBtn && contactData.contactInfo.email) {
+            emailBtn.href = contactData.contactInfo.email.href;
+            emailBtn.innerHTML = `${contactData.contactInfo.email.icon} ${contactData.contactInfo.email.address}`;
+          }
+          const socialBtns = contactInfo.querySelectorAll('.btn-ghost');
+          if (socialBtns.length && contactData.social) {
+            socialBtns.forEach((btn, i) => {
+              if (contactData.social[i]) {
+                btn.href = contactData.social[i].url;
+                btn.innerHTML = `${contactData.social[i].icon} ${contactData.social[i].platform}`;
+              }
+            });
+          }
+        }
+        const visitTitle = document.querySelector('#contact .card h3');
+        if (visitTitle && contactData.visit) visitTitle.textContent = contactData.visit.title;
+        const visitAddress = document.querySelector('#contact .card p');
+        if (visitAddress && contactData.visit) {
+          const visitPs = document.querySelectorAll('#contact .card p');
+          if (visitPs.length >= 3) {
+            visitPs[0].textContent = contactData.visit.address;
+            visitPs[1].textContent = contactData.visit.location;
+            visitPs[2].textContent = contactData.visit.hours;
+          }
+        }
+
+        // Populate Footer
+        const footerCopyright = document.querySelector('footer span:first-child');
+        if (footerCopyright && footerData.copyright) {
+          footerCopyright.innerHTML = `&copy; <span id="year"></span> ${footerData.copyright}`;
+        }
+        const footerSocial = document.querySelector('footer span:last-child');
+        if (footerSocial && footerData.social) {
+          footerSocial.innerHTML = footerData.social.map(s => `<a href="${s.url}">${s.text}</a>`).join('');
+        }
+
+        // Update SLIDES constant from heroData
+        if (heroData.slides) {
+          window.SLIDES_FROM_JSON = heroData.slides;
+        }
+        
+        return true; // Signal that content is loaded
+      } catch (error) {
+        console.error('Error loading content:', error);
+        return false;
+      }
+    })();
+
     // Config — we keep multiple slide sources but only display the primary one (no swapping)
     const SLIDES = [
       { title: "ZANELLA Lounge", sub: "Warm & Cozy Atmosphere and an intimate experience", image: "assets/zanella_image_1.jpg" },
@@ -682,10 +505,13 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 
     // Hero: mount single slide (primary image) and lightly animate it via CSS keyframes above.
     function mountSlides(){
-      const primary = SLIDES[0];
-      heroMedia.innerHTML = `<div class="slide" style="background-image:url('${primary.image}')"></div>`;
-      heroHeadline.textContent = primary.title;
-      heroSub.textContent = primary.sub;
+      const slides = window.SLIDES_FROM_JSON || SLIDES;
+      const primary = slides[0];
+      if (primary) {
+        heroMedia.innerHTML = `<div class="slide" style="background-image:url('${primary.image}')"></div>`;
+        heroHeadline.textContent = primary.title;
+        heroSub.textContent = primary.sub;
+      }
     }
 
     // Reveal
@@ -727,7 +553,9 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
     function stopParticles(){ if(raf) cancelAnimationFrame(raf); raf=null; particlesRunning=false; }
 
     // Init
-    window.addEventListener('DOMContentLoaded', ()=>{
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      // Wait for content to load before initializing
+      await window.contentLoaded;
       mountSlides(); enableReveal();
       const yearEl=document.getElementById('year'); if(yearEl) yearEl.textContent=new Date().getFullYear();
       if(ticketBtn) ticketBtn.href=TICKET_URL;
@@ -763,7 +591,7 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
     requestAnimationFrame(()=>{
       panel.classList.add('open');
       panel.setAttribute('aria-hidden','false');
-      btn.textContent='Hide Menu'; btn.setAttribute('aria-expanded','true');
+      btn.textContent = (window.MENU_BUTTON_TEXTS && window.MENU_BUTTON_TEXTS.hide) || 'Hide Menu'; btn.setAttribute('aria-expanded','true');
       panel.querySelectorAll('a,button')[0]?.focus();
       // apply randomized looks when opening
       try{ window.randomizePricingLooks && window.randomizePricingLooks(); }catch(e){}
@@ -774,7 +602,7 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
     // remove open class to animate closed state
     panel.classList.remove('open');
     panel.setAttribute('aria-hidden','true');
-    btn.textContent='Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus();
+    btn.textContent = (window.MENU_BUTTON_TEXTS && window.MENU_BUTTON_TEXTS.show) || 'Show Menu'; btn.setAttribute('aria-expanded','false'); btn.focus();
     // after transition ends, remove from flow to avoid blocking scroll
     const onTransEnd = (ev)=>{ if(ev.target!==panel) return; panel.style.display = 'none'; panel.removeEventListener('transitionend', onTransEnd); };
     panel.addEventListener('transitionend', onTransEnd);
@@ -799,8 +627,8 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
       const panel = document.getElementById('embeddedPricing');
       if(!btn || !panel) return;
 
-  function openPricing(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent='Hide rental pricing'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
-  function closePricing(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent='Show rental pricing'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
+  function openPricing(){ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.textContent = (window.PRICING_BUTTON_TEXTS && window.PRICING_BUTTON_TEXTS.hide) || 'Hide rental pricing'; btn.setAttribute('aria-expanded','true'); panel.querySelectorAll('a,button')[0]?.focus(); }
+  function closePricing(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); btn.textContent = (window.PRICING_BUTTON_TEXTS && window.PRICING_BUTTON_TEXTS.show) || 'Show rental pricing'; btn.setAttribute('aria-expanded','false'); btn.focus(); }
   window.openEmbeddedPricing = openPricing;
   window.closeEmbeddedPricing = closePricing;
 

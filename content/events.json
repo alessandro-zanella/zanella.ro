@@ -1,0 +1,68 @@
+{
+  "title": "Host Your Evening With Us",
+  "description": "Whether it's a birthday, product launch, intimate concert, or a curated tasting for friends and colleagues, ZANELLA Lounge offers a warm-industrial setting with hosted service and craft cocktails. We handle the details so you can focus on the moment — sound, lighting, and a menu tailored to your night.",
+  "features": [
+    {
+      "text": "Dedicated host & curated cocktail programme",
+      "class": "chip"
+    },
+    {
+      "text": "Flexible seating & private Social Suites",
+      "class": "chip chip--green"
+    },
+    {
+      "text": "Onsite AV options and customizable playlists",
+      "class": "chip"
+    }
+  ],
+  "note": "Interested? Reach out to discuss dates, menus, and capacity — we'll prepare a personalised proposal.",
+  "ctas": [
+    {
+      "text": "Enquire About Hosting",
+      "href": "#contact",
+      "class": "btn btn-gold"
+    },
+    {
+      "text": "See The Lounge",
+      "href": "#about",
+      "class": "btn btn-ghost"
+    }
+  ],
+  "image": {
+    "src": "assets/zanella_lounge_location_preview.jpg",
+    "alt": "Zanella Lounge Location"
+  },
+  "pricing": {
+    "title": "Pricing & Packages",
+    "description": "Starting rates (RON). Final quote depends on date, guest count and any bespoke requests.",
+    "toggleButton": {
+      "text": "Show rental pricing",
+      "textHide": "Hide rental pricing",
+      "class": "btn btn-ghost"
+    },
+    "packages": [
+      {
+        "name": "Hourly Hire",
+        "description": "Pay per hour — ideal for short gatherings (min. 2 hours)",
+        "price": "RON 200 / oră"
+      },
+      {
+        "name": "Multi‑Hour Package (3h)",
+        "description": "Recommended for intimate events and tastings — includes welcome aperitivo",
+        "price": "RON 520"
+      },
+      {
+        "name": "Evening Hire (5h)",
+        "description": "Standard evening slot — semi‑private layout and dedicated host",
+        "price": "RON 950"
+      },
+      {
+        "name": "Full‑Day Hire (10h)",
+        "description": "Exclusive use, bespoke menu & staffing options",
+        "price": "RON 1.700+"
+      }
+    ],
+    "extrasNote": "Extras (live music, AV, custom menu, cocktails) are quoted separately. Contact us for availability and a personalised proposal."
+  }
+}
+

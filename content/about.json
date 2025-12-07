@@ -1,0 +1,26 @@
+{
+  "title": "About Us",
+  "description": "ZANELLA Lounge is an elevated social space in Cluj-Napoca. <br>High Quality Food & Drinks.<br>Curated Music & Ambiance.<br>Weekly Themed Events.<br>Great Service.<br>Dress Code: Smart Casual. <br>(No sportswear, or overly casual attire)",
+  "features": [
+    {
+      "text": "Elevated Comfort Food",
+      "class": "chip",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M4 12h16M4 12c0-4 3-7 8-7s8 3 8 7M4 12c0 4 3 7 8 7s8-3 8-7\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/></svg>"
+    },
+    {
+      "text": "Craft Cocktails",
+      "class": "chip chip--green",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M6 20l6-16 6 16M9.5 12h5\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/></svg>"
+    },
+    {
+      "text": "Music & Social Nights",
+      "class": "chip",
+      "icon": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M6 6l12 12M18 6L6 18\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"/></svg>"
+    }
+  ],
+  "image": {
+    "src": "assets/zanella_lounge_location_preview.jpg",
+    "alt": "Zanella Lounge Location"
+  }
+}
+

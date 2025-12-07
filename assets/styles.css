@@ -12,9 +12,9 @@
 /* Hide scrollbars but allow scrolling */
 html{ scrollbar-width:none; -ms-overflow-style:none; }
 body::-webkit-scrollbar{ display:none; width:0; height:0; }
-*, *::before, *::after { box-sizing:border-box; }
-html, body { height:100%; }
-body{ margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+*, *::before, *::after { box-sizing: border-box; }
+html { height:100%; }
+body{ margin:0; min-height:100vh; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans";
   color:var(--text); background:var(--bg); line-height:1.6; letter-spacing:.2px; overflow-x:hidden; }
 img{max-width:100%; display:block;} a{color:inherit; text-decoration:none}
 .container{width:100%; max-width:var(--max); margin-inline:auto; padding:0 20px}
@@ -65,9 +65,12 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 .nav a{ color:var(--muted); font-size:.95rem } .nav a:hover{ color:var(--text) }
 .nav-links{ display:flex; gap:1rem }
 
-/* HERO */
-/* use JS-driven --vh to avoid mobile address-bar resize jitter */
-.hero{ position:relative; min-height: calc(var(--vh, 1vh) * 82); display:grid; place-items:center; overflow:hidden; }
+.hero{
+  position:relative;
+  /* make hero fill the viewport minus the sticky nav (64px) so overlay covers full screen on load */
+  min-height: calc( (var(--vh, 1vh) * 100) - 64px );
+  display:grid; place-items:center; overflow:hidden;
+}
 .hero-media{
   position:absolute; inset:0; pointer-events:none;
   /* Force GPU compositing to avoid scroll jitter on mobile */
@@ -103,6 +106,12 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 .hero h1 .accent{ color: var(--accent-3); text-shadow: 0 0 18px rgba(95,179,140,.25); }
 .hero p{ color:var(--muted); margin:.5rem auto 1.2rem; max-width:36rem }
 .hero-ctas{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap }
+
+/* Scroll indicator under hero CTAs: subtle pulsing down arrow */
+.scroll-indicator{ display:inline-flex; align-items:center; justify-content:center; margin: 128px auto 0; width:44px; height:44px; border-radius:999px; background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer; animation: scroll-pulse 1.6s ease-in-out infinite; }
+.scroll-indicator svg{ width:32px; height:32px; display:block }
+@keyframes scroll-pulse{ 0%{ transform: translateY(0); opacity:.8 } 50%{ transform: translateY(8px); opacity:.4 } 100%{ transform: translateY(0); opacity:.8 } }
+@media (prefers-reduced-motion: reduce){ .scroll-indicator{ animation:none } }
 
 /* Tickets */
 .tickets{ position:relative } .tickets .card{ overflow:hidden }
@@ -165,9 +174,9 @@ footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
 @media (prefers-reduced-motion: reduce){ .slide, .reveal, .btn{ transition:none } .ambient, body::before{ animation:none } }
 
 /* Embedded menu animation (used by #embeddedMenu) */
-.embedded-menu-wrapper{ overflow:hidden; }
+#embedded-menu-wrapper{ overflow:visible; }
 #embeddedMenu{ max-height:0; opacity:0; transform:translateY(-6px); transition: max-height .45s var(--easing), opacity .36s var(--easing), transform .36s var(--easing); }
-#embeddedMenu.open{ max-height: 85vh; opacity:1; transform:translateY(0); overflow:auto; -webkit-overflow-scrolling: touch; padding-bottom:24px; }
+#embeddedMenu.open{ max-height: none; opacity:1; transform:translateY(0); overflow:visible; padding-bottom:24px; }
 #embeddedMenu .pricing-list{ margin-top:.6rem }
 @media (prefers-reduced-motion: reduce){ #embeddedMenu, #embeddedMenu.open{ transition:none; transform:none; } }
 
@@ -177,7 +186,7 @@ footer{ border-top:1px solid var(--line); padding:28px 0; color:var(--muted) }
 @media (prefers-reduced-motion: reduce){ .embedded-panel, .embedded-panel.open{ transition:none; transform:none; } }
 
 /* Full-bleed Menu Section with background image */
-#menuSection{ position:relative; background-image: url('../assets/zanella_lounge_location_preview.jpg'); background-size:cover; background-position:center; padding:72px 0; }
+#menuSection{ position:relative; padding:72px 0; }
 #menuSection::before{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(23,27,31,.36), rgba(23,27,31,.6)); z-index:0; }
 #menuSection .container{ position:relative; z-index:1; }
 
@@ -310,3 +319,39 @@ body.menu-open{ overflow:hidden; position:fixed; width:100%; }
 
 /* canvas overlay for premium particle animation */
 .premium-canvas{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; opacity:1 }
+
+/* Three visual variants for pricing rows: gold (opaque gold), silver (opaque silver), gray (minimal) */
+.gold-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
+  position:relative; overflow:hidden; /* allow canvas overlay */
+  background: linear-gradient(90deg, rgba(195,154,107,.5), rgba(195,154,107,.45)); border:1px solid rgba(189,143,79,.6);
+}
+.gold-row .meta{ color:#fff; font-weight:700 }
+.gold-row .price{ color:#fff; font-weight:900 }
+
+.silver-row{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.6rem; border-radius:10px;
+  position:relative; overflow:hidden; /* allow canvas overlay */
+  background: linear-gradient(90deg, rgba(230,230,230,.5), rgba(210,210,210,.45)); border:1px solid rgba(200,200,200,.6);
+}
+.silver-row .meta{ color:#fff; font-weight:700 }
+.silver-row .price{ color:#fff; font-weight:800 }
+
+.price-category{ 
+  font-size:1rem; 
+  color:rgba(255,255,255,.85); 
+  margin:.6rem; 
+  margin-top: 2rem;
+  font-weight:400; }
+
+.gray-row{
+  margin-left: .6rem;
+  display:flex; justify-content:space-between; align-items:center; gap:12px; padding:.5rem 0; border-radius:6px;
+  background: transparent; border:none;
+}
+.gray-row .meta{ color:var(--muted); font-weight:500 }
+.gray-row .price{ color:var(--muted); font-weight:600 }
+
+/* per-row overlay canvas for subtle particles */
+.row-canvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; display:block; }
+.gold-row > *:not(.row-canvas), .silver-row > *:not(.row-canvas) { position:relative; z-index:1; }

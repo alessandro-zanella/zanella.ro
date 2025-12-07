@@ -1,0 +1,333 @@
+{
+  "title": "Menu",
+  "description": "Tap the button to show or hide a sample of our menu.",
+  "toggleButton": {
+    "text": "Show Menu",
+    "textHide": "Hide Menu",
+    "class": "btn btn-gold"
+  },
+  "categories": [
+    {
+      "name": "Bubbles (Prosecco & Champagne)",
+      "items": [
+        {
+          "name": "Dom Pérignon Vintage (Bottle)",
+          "price": "2200",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Moët & Chandon Brut (Bottle)",
+          "price": "650",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Prosecco Superiore DOCG Valdobbiadene (Bottle)",
+          "price": "280",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Prosecco DOC (Bottle)",
+          "price": "180",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Wines by the Glass (150 ml)",
+      "items": [
+        {
+          "name": "Boutique Import",
+          "price": "45",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Italian Pinot Grigio / Merlot",
+          "price": "35",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "House White",
+          "price": "22",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "House Red",
+          "price": "22",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Whiskies (Bottles)",
+      "items": [
+        {
+          "name": "Macallan 18 Sherry Oak",
+          "price": "2800",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Johnnie Walker Gold Label",
+          "price": "750",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Jameson",
+          "price": "450",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Rums (Bottles)",
+      "items": [
+        {
+          "name": "Zacapa XO",
+          "price": "1200",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Diplomatico Reserva Exclusiva",
+          "price": "550",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Havana Club 7 Años",
+          "price": "380",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Vodka & Tequila (Bottles)",
+      "items": [
+        {
+          "name": "Clase Azul Reposado",
+          "price": "3000",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Grey Goose",
+          "price": "700",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Absolut",
+          "price": "350",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Cocktails",
+      "items": [
+        {
+          "name": "Zanella Gold Martini",
+          "description": "(Saffron, Truffle, 24k Gold Leaf)",
+          "price": "220",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Negroni",
+          "price": "45",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Espresso Martini",
+          "price": "42",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Aperol Spritz",
+          "price": "32",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Whiskey Sour",
+          "price": "42",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Mojito",
+          "price": "38",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Cuba Libre",
+          "price": "35",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Gin & Tonic",
+          "price": "35",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Beers",
+      "items": [
+        {
+          "name": "Seasonal Specialty Brew (0.33 L)",
+          "price": "32",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Craft IPA (0.33 L)",
+          "price": "26",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Imported Lager (0.33 L)",
+          "price": "22",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Local Draft (0.5 L)",
+          "price": "18",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Spritz & Light",
+      "items": [
+        {
+          "name": "Prestige Spritz (with Premium Prosecco)",
+          "price": "55",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Hugo Spritz",
+          "price": "38",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Aperol Spritz",
+          "price": "32",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Rosé Spritz",
+          "price": "30",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Coffees & Teas",
+      "items": [
+        {
+          "name": "Seasonal Reserve Coffee",
+          "price": "35",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Latte Macchiato / Iced Latte",
+          "price": "20-25",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Cappuccino",
+          "price": "18",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Double Espresso",
+          "price": "16",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Espresso",
+          "price": "12",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Rare Estate Tea",
+          "price": "35",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Curated Herbal Infusion",
+          "price": "20",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Classic Tea Selection",
+          "price": "15",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    },
+    {
+      "name": "Non-Alcoholic & Mocktails",
+      "items": [
+        {
+          "name": "Botanical Reserve Mocktail",
+          "price": "35",
+          "currency": "lei",
+          "class": "gold-row"
+        },
+        {
+          "name": "Virgin Mojito / Fresh Pressed Juice",
+          "price": "20-25",
+          "currency": "lei",
+          "class": "silver-row"
+        },
+        {
+          "name": "Soft Drinks",
+          "price": "12",
+          "currency": "lei",
+          "class": "gray-row"
+        },
+        {
+          "name": "Water Still / Sparkling (0.33 L)",
+          "price": "10",
+          "currency": "lei",
+          "class": "gray-row"
+        }
+      ]
+    }
+  ]
+}
+
