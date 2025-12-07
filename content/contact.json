@@ -1,8 +1,7 @@
 {
   "title": "Contact",
   "description": [
-    "Questions about private bookings or upcoming events? Drop us a note.",
-    "Prefer to reach us directly? Call or email — we'll get back shortly."
+    "Get in touch for bookings or inquiries."
   ],
   "contactInfo": {
     "phone": {
@@ -39,7 +38,7 @@
   "visit": {
     "title": "Visit",
     "address": "Strada Ciocarliei 15, Cluj‑Napoca",
-    "location": "Hotel Casa Alesiv - Franchise Partners",
+    "location": null,
     "hours": "Open Tue–Sun · 17:00–01:00",
     "mapImage": "https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop"
   }

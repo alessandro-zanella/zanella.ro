@@ -1,40 +1,24 @@
 {
   "title": "Host Your Evening With Us",
-  "description": "Whether it's a birthday, product launch, intimate concert, or a curated tasting for friends and colleagues, ZANELLA Lounge offers a warm-industrial setting with hosted service and craft cocktails. We handle the details so you can focus on the moment — sound, lighting, and a menu tailored to your night.",
+  "description": "Private events, tastings, and celebrations in our warm-industrial setting with craft cocktails and hosted service.",
   "features": [
     {
-      "text": "Dedicated host & curated cocktail programme",
+      "text": "Dedicated host & craft cocktails",
       "class": "chip"
     },
     {
-      "text": "Flexible seating & private Social Suites",
+      "text": "Flexible seating & private suites",
       "class": "chip chip--green"
-    },
-    {
-      "text": "Onsite AV options and customizable playlists",
-      "class": "chip"
     }
   ],
-  "note": "Interested? Reach out to discuss dates, menus, and capacity — we'll prepare a personalised proposal.",
-  "ctas": [
-    {
-      "text": "Enquire About Hosting",
-      "href": "#contact",
-      "class": "btn btn-gold"
-    },
-    {
-      "text": "See The Lounge",
-      "href": "#about",
-      "class": "btn btn-ghost"
-    }
-  ],
+  "note": "Contact us to discuss your event.",
   "image": {
     "src": "assets/zanella_lounge_location_preview.jpg",
     "alt": "Zanella Lounge Location"
   },
   "pricing": {
     "title": "Pricing & Packages",
-    "description": "Starting rates (RON). Final quote depends on date, guest count and any bespoke requests.",
+    "description": "Starting rates (RON).",
     "toggleButton": {
       "text": "Show rental pricing",
       "textHide": "Hide rental pricing",
@@ -62,7 +46,7 @@
         "price": "RON 1.700+"
       }
     ],
-    "extrasNote": "Extras (live music, AV, custom menu, cocktails) are quoted separately. Contact us for availability and a personalised proposal."
+    "extrasNote": "Extras quoted separately. Contact us for details."
   }
 }
 
