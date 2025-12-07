@@ -5,13 +5,14 @@
       "description": "Petrecere de Revelion 2025/26 la Zanella: muzică selectă, cină festivă, cocktailuri speciale, atmosferă elegantă și surprize pe tot parcursul nopții.",
       "location": "Zanella Lounge, Strada Ciocarliei 15, Cluj-Napoca",
       "date": "December 31, 2025",
-      "offers": [
-        {
-          "text": "More Info",
-          "href": "#wine-tasting",
-          "type": "info",
-          "class": "btn btn-ghost"
-        }
+      "details": "Join us for an unforgettable New Year's Eve celebration at Zanella Lounge. Experience an elegant evening filled with carefully selected music, a festive dinner, special cocktails, and surprises throughout the night. Our warm-industrial setting provides the perfect backdrop for ringing in the new year in style.",
+      "highlights": [
+        "Live DJ with curated music selection",
+        "Festive multi-course dinner",
+        "Special New Year's cocktail menu",
+        "Champagne toast at midnight",
+        "Party favors and surprises",
+        "Elegant atmosphere with premium service"
       ]
     },
     {
@@ -19,12 +20,21 @@
       "description": "Ne intrunim la Cabana 30 Ianuarie - 1 Februarie 2026 in Somesul Rece, Gilau",
       "location": "Somesul Rece, Gilau",
       "date": "30 Ianuarie - 1 Februarie 2026",
+      "details": "Join us for a weekend retreat at the cabin in Somesul Rece, Gilau. Experience a relaxing getaway in nature with quality food, drinks, and good company. Perfect for those looking to escape the city and enjoy a peaceful mountain setting.",
+      "highlights": [
+        "Weekend accommodation",
+        "All meals included",
+        "Mountain activities",
+        "Cozy cabin atmosphere",
+        "Group activities and entertainment"
+      ],
       "offers": [
         {
-          "text": "More Info",
-          "href": "#wine-tasting",
-          "type": "info",
-          "class": "btn btn-ghost"
+          "name": "Weekend Package",
+          "description": "2 nights accommodation, all meals, and activities",
+          "price": "RON 400/persoană",
+          "paymentLink": "#",
+          "type": "buy"
         }
       ]
     }
